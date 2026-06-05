@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星之翼 カスタムランダムセレクト</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --section-bg: #252525;
+            --card-bg: #2a2a2a;
+            --list-bg: #1a1a1a;
+            --text-main: #ffffff;
+            --text-sub: #aaa;
+            --accent-color: #00ffcc;
+            --border-color: #444;
+            --accent-bg: rgba(0, 255, 204, 0.1);
+            --btn-text: #121212;
+        }
+        [data-theme="light"] {
+            --bg-color: #f5f5f7;
+            --container-bg: #ffffff;
+            --section-bg: #f0f0f2;
+            --card-bg: #e8e8ec;
+            --list-bg: #fafafa;
+            --text-main: #1d1d1f;
+            --text-sub: #555555;
+            --accent-color: #0066cc;
+            --border-color: #cccccc;
+            --accent-bg: rgba(0, 102, 204, 0.1);
+            --btn-text: #ffffff;
+        }
+        [data-theme="custom"] {
+            --bg-color: #fbf9f1;
+            --container-bg: #f7f4e9;
+            --section-bg: #eee9da;
+            --card-bg: #dfd9c6;
+            --list-bg: #fbf9f1;
+            --text-main: #000000;
+            --text-sub: #444444;
+            --accent-color: #d35400;
+            --border-color: #cca47e;
+            --accent-bg: rgba(211, 84, 0, 0.1);
+            --btn-text: #ffffff;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background: var(--container-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: background 0.3s;
+        }
+        h1 { color: var(--accent-color); font-size: 28px; margin-bottom: 20px; transition: color 0.3s; }
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .back-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            transition: 0.2s;
+        }
+        .back-link:hover { border-color: var(--accent-color); }
+        .theme-switcher { display: flex; gap: 5px; }
+        .btn-theme {
+            background: var(--section-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-left: 5px;
+            transition: 0.2s;
+        }
+        .btn-theme:hover, .btn-theme.active { border-color: var(--accent-color); color: var(--accent-color); }
+        .settings-section {
+            background: var(--section-bg);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            transition: background 0.3s;
+        }
+        .settings-section h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            font-size: 16px;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .flex-wrap { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; }
+        .checkbox-label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .cost-group-title {
+            grid-column: 1 / -1;
+            font-weight: bold;
+            color: var(--accent-color);
+            background: var(--card-bg);
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 14px;
+            transition: color 0.3s, background 0.3s;
+        }
+        .cost-group-title:first-child { margin-top: 0; }
+        .char-pool-container {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            background: var(--list-bg);
+            border-radius: 5px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 8px;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .btn-main {
+            background-color: var(--accent-color);
+            color: var(--btn-text);
+            border: none;
+            padding: 15px 40px; font-size: 20px; font-weight: bold;
+            border-radius: 30px; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin: 20px 0;
+        }
+        .btn-main:hover { opacity: 0.9; transform: scale(1.02); }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .player-card {
+            background: var(--container-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            transition: 0.3s;
+            position: relative;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .player-title { font-size: 16px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; }
+        .char-display {
+            width: 100%;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .char-img {
+            width: 140px; height: 140px;
+            border-radius: 10px;
+            border: 2px solid var(--accent-color);
+            object-fit: cover;
+            margin-bottom: 12px;
+            background: var(--list-bg);
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            transition: border-color 0.3s;
+        }
+        .player-card.rare-selected { border-color: #ffcc00; box-shadow: 0 0 15px rgba(255,204,0,0.6); }
+        .player-card.rare-selected .char-img { border-color: #ffcc00; }
+        .player-card.rare-selected .rare-badge {
+            color: #ffcc00; font-size: 11px; font-weight: bold;
+            margin-top: 2px; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .char-name { font-size: 16px; font-weight: bold; word-break: break-all; line-height: 1.3; margin-bottom: 6px; }
+        .char-cost {
+            font-size: 13px; color: var(--accent-color);
+            background: var(--accent-bg); padding: 2px 10px;
+            border-radius: 10px; font-weight: bold;
+            transition: color 0.3s, background 0.3s;
+        }
+        .history-section {
+            background: var(--section-bg);
+            padding: 15px; border-radius: 10px; margin-top: 30px;
+            text-align: left; transition: background 0.3s;
+        }
+        .history-container {
+            max-height: 250px; overflow-y: auto;
+            border: 1px solid var(--border-color);
+            padding: 10px; background: var(--list-bg);
+            border-radius: 5px; display: flex; flex-direction: column;
+            gap: 12px; box-sizing: border-box;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .history-row {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 10px; padding: 6px 0;
+            border-bottom: 1px dashed var(--border-color);
+            animation: slideDown 0.3s ease-out;
+        }
+        .history-row:last-child { border-bottom: none; }
+        .history-item {
+            display: flex; align-items: center;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 6px 12px; border-radius: 20px; gap: 8px;
+            box-sizing: border-box; min-width: 0;
+        }
+        .history-item.is-rare { border-color: #ffcc00; background: rgba(255,204,0,0.05); }
+        .history-img {
+            width: 32px; height: 32px; border-radius: 50%;
+            object-fit: cover; border: 1px solid var(--accent-color); flex-shrink: 0;
+        }
+        .history-item.is-rare .history-img { border-color: #ffcc00; }
+        .history-name { font-size: 13px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-cost {
+            font-size: 11px; color: var(--text-sub);
+            background: var(--bg-color); padding: 1px 6px;
+            border-radius: 8px; flex-shrink: 0; margin-left: auto;
+        }
+        .history-empty { color: var(--text-sub); font-size: 14px; font-style: italic; padding: 10px; text-align: center; width: 100%; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 15px; margin: 10px auto; }
+            h1 { font-size: 22px; }
+            .char-pool-container { grid-template-columns: repeat(2, 1fr); max-height: 300px; }
+            .checkbox-label { padding: 6px 4px; font-size: 14px; }
+            .btn-main { width: 100%; max-width: 300px; padding: 12px 0; font-size: 18px; }
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .char-img { width: 110px; height: 110px; }
+            .char-display { min-height: 180px; }
+            .char-name { font-size: 14px; }
+            .history-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 380px) {
+            .grid-container { grid-template-columns: 1fr; }
+            .char-pool-container { grid-template-columns: 1fr; }
+            .history-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-bar">
+        <a class="back-link" href="../">← トップへ戻る</a>
+        <div class="theme-switcher">
+            <button class="btn-theme" onclick="setTheme('dark')"   id="t-dark">ダーク</button>
+            <button class="btn-theme" onclick="setTheme('light')"  id="t-light">ライト</button>
+            <button class="btn-theme" onclick="setTheme('custom')" id="t-custom">クリーム</button>
+        </div>
+    </div>
+
+    <h1>星之翼 カスタムランダムセレクト</h1>
+
+    <div class="settings-section">
+        <h3>1. コスト設定</h3>
+        <div class="flex-wrap">
+            <div>
+                <strong>抽出コスト：</strong>
+                <label class="checkbox-label" style="display:inline-flex;"><input type="checkbox" class="cost-filter" value="3.0" checked onchange="saveCostSettings()"> 3.0</label>
+                <label class="checkbox-label" style="display:inline-flex;"><input type="checkbox" class="cost-filter" value="2.5" checked onchange="saveCostSettings()"> 2.5</label>
+                <label class="checkbox-label" style="display:inline-flex;"><input type="checkbox" class="cost-filter" value="2.0" checked onchange="saveCostSettings()"> 2.0</label>
+                <label class="checkbox-label" style="display:inline-flex;"><input type="checkbox" class="cost-filter" value="1.5" checked onchange="saveCostSettings()"> 1.5</label>
+            </div>
+            <div style="margin-left:auto; font-size:12px; color:var(--text-sub); display:flex; align-items:center;">
+                ※レア画像出現確率：10%
+            </div>
+        </div>
+        <h3>2. キャラクターの個別オンオフ（BAN機能）</h3>
+        <div class="char-pool-container" id="individual-toggle-container"></div>
+    </div>
+
+    <button class="btn-main" onclick="rollRandom()">キャラクターを選出する</button>
+
+    <div class="grid-container">
+        <div class="player-card" id="card-0"><div class="player-title">1人目</div><div class="char-display" id="display-0"><div class="char-name">待機中</div></div></div>
+        <div class="player-card" id="card-1"><div class="player-title">2人目</div><div class="char-display" id="display-1"><div class="char-name">待機中</div></div></div>
+        <div class="player-card" id="card-2"><div class="player-title">3人目</div><div class="char-display" id="display-2"><div class="char-name">待機中</div></div></div>
+        <div class="player-card" id="card-3"><div class="player-title">4人目</div><div class="char-display" id="display-3"><div class="char-name">待機中</div></div></div>
+    </div>
+
+    <div class="history-section">
+        <h3>3. 選出履歴 (リロードでリセット)</h3>
+        <div class="history-container" id="history-log">
+            <div class="history-empty">まだ選出されていません</div>
+        </div>
+    </div>
+</div>
+
+<!-- ★ ルートフォルダの共通データを読み込む -->
+<script src="../characters.js"></script>
+
+<script>
+const IMAGE_BASE_URL = "https://raw.githubusercontent.com/Ala-Aster/Starward_RandomTool/main/images";
+const THEME_KEY = 'starward_theme';
+
+const characterPool = CHARACTER_DATA;
+
+function setTheme(name) {
+    if (name === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+    } else {
+        document.documentElement.setAttribute('data-theme', name);
+    }
+    localStorage.setItem(THEME_KEY, name);
+    document.querySelectorAll('.btn-theme').forEach(b => b.classList.remove('active'));
+    document.getElementById('t-' + name)?.classList.add('active');
+}
+
+function saveCostSettings() {
+    const data = Array.from(document.querySelectorAll('.cost-filter')).map(el => ({ value: el.value, checked: el.checked }));
+    localStorage.setItem('starward_cost_filters', JSON.stringify(data));
+}
+
+function saveCharSettings() {
+    const states = {};
+    document.querySelectorAll('.char-toggle').forEach(el => { states[el.value] = el.checked; });
+    localStorage.setItem('starward_char_filters', JSON.stringify(states));
+}
+
+window.onload = function() {
+    // テーマ復元（トップページと共通キー）
+    const saved = localStorage.getItem(THEME_KEY) || 'dark';
+    setTheme(saved);
+
+    // コスト設定復元
+    const savedCosts = localStorage.getItem('starward_cost_filters');
+    if (savedCosts) {
+        try {
+            const costMap = JSON.parse(savedCosts);
+            document.querySelectorAll('.cost-filter').forEach(el => {
+                const s = costMap.find(item => item.value === el.value);
+                if (s) el.checked = s.checked;
+            });
+        } catch(e) { console.error(e); }
+    }
+
+    // BAN リスト生成・復元
+    const container = document.getElementById("individual-toggle-container");
+    const costOrder = ["3.0", "2.5", "2.0", "1.5"];
+    const savedChars = localStorage.getItem('starward_char_filters');
+    let charStates = {};
+    if (savedChars) { try { charStates = JSON.parse(savedChars); } catch(e) {} }
+
+    costOrder.forEach(targetCost => {
+        const group = characterPool
+            .filter(c => c.cost === targetCost)
+            .sort((a, b) => a.kana.localeCompare(b.kana, 'ja'));
+
+        if (group.length === 0) return;
+
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "cost-group-title";
+        titleDiv.innerText = `▼ コスト ${targetCost}`;
+        container.appendChild(titleDiv);
+
+        group.forEach(c => {
+            const label = document.createElement("label");
+            label.className = "checkbox-label";
+            const charKey = `${c.cost}_${c.id}`;
+            const isChecked = charStates[charKey] !== undefined ? charStates[charKey] : true;
+            label.innerHTML = `<input type="checkbox" class="char-toggle" value="${charKey}" ${isChecked ? 'checked' : ''} onchange="saveCharSettings()"> ${c.name}`;
+            container.appendChild(label);
+        });
+    });
+};
+
+function rollRandom() {
+    const checkedCosts = Array.from(document.querySelectorAll('.cost-filter:checked')).map(el => el.value);
+    const activeCharKeys = Array.from(document.querySelectorAll('.char-toggle:checked')).map(el => el.value);
+
+    let filteredPool = characterPool.filter(c => {
+        const charKey = `${c.cost}_${c.id}`;
+        return checkedCosts.includes(c.cost) && activeCharKeys.includes(charKey);
+    });
+
+    let currentRollResults = [];
+
+    for (let slot = 0; slot < 4; slot++) {
+        const displayDiv = document.getElementById(`display-${slot}`);
+        const cardDiv = document.getElementById(`card-${slot}`);
+        cardDiv.classList.remove("rare-selected");
+
+        if (filteredPool.length === 0) {
+            displayDiv.innerHTML = '<div class="char-name" style="color:#ff4444; margin-top:90px;">候補なし</div>';
+            continue;
+        }
+
+        const randomIndex = Math.floor(Math.random() * filteredPool.length);
+        const selectedChar = filteredPool[randomIndex];
+        filteredPool.splice(randomIndex, 1);
+
+        let isRareSelected = false;
+        let imageSuffix = "";
+        if (Math.random() < 0.05 && selectedChar.hasRare >= 1) {
+            isRareSelected = true;
+            const rareNum = Math.floor(Math.random() * selectedChar.hasRare) + 1;
+            imageSuffix = "_rare" + rareNum;
+            cardDiv.classList.add("rare-selected");
+        }
+
+        const imgUrl = IMAGE_BASE_URL + "/" + selectedChar.cost + "/" + selectedChar.id + imageSuffix + ".png";
+        displayDiv.innerHTML = `
+            <img class="char-img" src="${imgUrl}" alt="${selectedChar.name}" onerror="this.src='https://via.placeholder.com/140?text=No+Image'">
+            <div class="char-name">${selectedChar.name}</div>
+            <div class="char-cost">${selectedChar.cost}</div>
+            <div class="rare-badge">${isRareSelected ? '★ 運がいいね ★' : ''}</div>
+        `;
+
+        currentRollResults.push({ name: selectedChar.name, cost: selectedChar.cost, imgUrl, isRare: isRareSelected });
+    }
+
+    if (currentRollResults.length > 0) updateHistoryUI(currentRollResults);
+}
+
+function updateHistoryUI(newRecords) {
+    const historyContainer = document.getElementById("history-log");
+    const emptyMsg = historyContainer.querySelector(".history-empty");
+    if (emptyMsg) historyContainer.innerHTML = "";
+
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "history-row";
+
+    newRecords.forEach(char => {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = `history-item ${char.isRare ? 'is-rare' : ''}`;
+        const displayName = char.isRare ? `★${char.name}` : char.name;
+        itemDiv.innerHTML = `
+            <img class="history-img" src="${char.imgUrl}" alt="${char.name}" onerror="this.src='https://via.placeholder.com/140?text=No+Image'">
+            <span class="history-name" title="${char.name}">${displayName}</span>
+            <span class="history-cost">${char.cost}</span>
+        `;
+        rowDiv.appendChild(itemDiv);
+    });
+
+    historyContainer.insertBefore(rowDiv, historyContainer.firstChild);
+    historyContainer.scrollTop = 0;
+}
+</script>
+</body>
+</html>
