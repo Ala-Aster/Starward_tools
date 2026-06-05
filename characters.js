@@ -1,0 +1,86 @@
+// ============================================================
+//  characters.js — 星之翼 共通キャラクターデータ
+//  このファイルを編集すれば、すべてのツールに反映されます
+// ============================================================
+
+const CHARACTER_DATA = [
+
+  // --- コスト 3.0 ---
+  { id: "c001", name: "グリフィン",           kana: "ぐりふぃん",               cost: "3.0", hasRare: 1 },
+  { id: "c002", name: "ヒカリ",               kana: "ひかり",                   cost: "3.0", hasRare: 2 },
+  { id: "c003", name: "エルフィン",           kana: "えるふぃん",               cost: "3.0", hasRare: 0 },
+  { id: "c004", name: "ケルビム",             kana: "けるびむ",                 cost: "3.0", hasRare: 2 },
+  { id: "c005", name: "シュウウ",             kana: "しゅうう",                 cost: "3.0", hasRare: 0 },
+  { id: "c006", name: "スズラン",             kana: "すずらん",                 cost: "3.0", hasRare: 1 },
+  { id: "c007", name: "キャヴァリー",         kana: "きゃばりー",               cost: "3.0", hasRare: 0 },
+  { id: "c008", name: "ラジエル",             kana: "らじえる",                 cost: "3.0", hasRare: 1 },
+  { id: "c009", name: "影",                   kana: "かげ",                     cost: "3.0", hasRare: 2 },
+  { id: "c010", name: "ライン",               kana: "らいん",                   cost: "3.0", hasRare: 1 },
+  { id: "c011", name: "ロタ",                 kana: "ろた",                     cost: "3.0", hasRare: 2 },
+  { id: "c012", name: "イーザー",             kana: "いーざー",                 cost: "3.0", hasRare: 0 },
+  { id: "c013", name: "秋雲",                 kana: "あきぐも",                 cost: "3.0", hasRare: 1 },
+  { id: "c014", name: "ベータｰロンギヌス",   kana: "べーたーろんぎぬす",       cost: "3.0", hasRare: 1 },
+  { id: "c015", name: "キャミイ",             kana: "きゃみい",                 cost: "3.0", hasRare: 1 },
+  { id: "c016", name: "セイレン",             kana: "せいれん",                 cost: "3.0", hasRare: 1 },
+  { id: "c017", name: "無銘",                 kana: "むめい",                   cost: "3.0", hasRare: 0 },
+  { id: "c018", name: "アカツキ",             kana: "あかつき",                 cost: "3.0", hasRare: 0 },
+  { id: "c019", name: "ヴォイドセイバー",     kana: "うぉいどせいばー",         cost: "3.0", hasRare: 0 },
+
+  // --- コスト 2.5 ---
+  { id: "c001", name: "フリード",             kana: "ふりーど",                 cost: "2.5", hasRare: 0 },
+  { id: "c002", name: "カゼ",                 kana: "かぜ",                     cost: "2.5", hasRare: 2 },
+  { id: "c003", name: "シャオリン",           kana: "しゃおりん",               cost: "2.5", hasRare: 1 },
+  { id: "c004", name: "シャープ",             kana: "しゃーぷ",                 cost: "2.5", hasRare: 2 },
+  { id: "c005", name: "アリス",               kana: "ありす",                   cost: "2.5", hasRare: 1 },
+  { id: "c006", name: "スカイセイバー",       kana: "すかいせいばー",           cost: "2.5", hasRare: 1 },
+  { id: "c007", name: "十八号",               kana: "じゅうはちごう",           cost: "2.5", hasRare: 0 },
+  { id: "c008", name: "シグナス",             kana: "しぐなす",                 cost: "2.5", hasRare: 0 },
+  { id: "c009", name: "アンジェリス",         kana: "あんじぇりす",             cost: "2.5", hasRare: 1 },
+  { id: "c010", name: "ヴァルキア",           kana: "わるきあ",                 cost: "2.5", hasRare: 1 },
+  { id: "c011", name: "エヴァ",               kana: "えゔぁ",                   cost: "2.5", hasRare: 1 },
+  { id: "c012", name: "轟雷改",               kana: "ごうらいかい",             cost: "2.5", hasRare: 0 },
+  { id: "c013", name: "稲",                   kana: "いな",                     cost: "2.5", hasRare: 0 },
+  { id: "c014", name: "バーゼラルド",         kana: "ばーぜらるど",             cost: "2.5", hasRare: 0 },
+  { id: "c015", name: "ノーラ",               kana: "のーら",                   cost: "2.5", hasRare: 0 },
+  { id: "c016", name: "ランスロット",         kana: "らんすろっと",             cost: "2.5", hasRare: 1 },
+  { id: "c017", name: "サンダーボルト",       kana: "さんだーぼると",           cost: "2.5", hasRare: 0 },
+  { id: "c018", name: "ガラハッド・暁",       kana: "がらはっどあかつき",       cost: "2.5", hasRare: 0 },
+  { id: "c019", name: "デッド・アライブ",     kana: "でっどあらいぶ",           cost: "2.5", hasRare: 0 },
+  { id: "c020", name: "ハルカ",               kana: "はるか",                   cost: "2.5", hasRare: 1 },
+  { id: "c021", name: "ドラグナー",           kana: "どらぐなー",               cost: "2.5", hasRare: 1 },
+  { id: "c022", name: "レキ",                 kana: "れき",                     cost: "2.5", hasRare: 0 },
+  { id: "c023", name: "ブラック★ロックシューター", kana: "ぶらっくろっくしゅーたー", cost: "2.5", hasRare: 0 },
+  { id: "c024", name: "デッドマスター",       kana: "でっどますたー",           cost: "2.5", hasRare: 0 },
+
+  // --- コスト 2.0 ---
+  { id: "c001", name: "ベータ",               kana: "べーた",                   cost: "2.0", hasRare: 0 },
+  { id: "c002", name: "デュカリオン",         kana: "でゅかりおん",             cost: "2.0", hasRare: 2 },
+  { id: "c003", name: "セラフィム",           kana: "せらふぃむ",               cost: "2.0", hasRare: 0 },
+  { id: "c004", name: "アイーダ",             kana: "あいーだ",                 cost: "2.0", hasRare: 2 },
+  { id: "c005", name: "パラス",               kana: "ぱらす",                   cost: "2.0", hasRare: 0 },
+  { id: "c006", name: "スコーピオン",         kana: "すこーぴおん",             cost: "2.0", hasRare: 1 },
+  { id: "c007", name: "ヴァーチェ",           kana: "わーちぇ",                 cost: "2.0", hasRare: 1 },
+  { id: "c008", name: "ザハロワ",             kana: "ざはろわ",                 cost: "2.0", hasRare: 0 },
+  { id: "c009", name: "咲迦",                 kana: "えみか",                   cost: "2.0", hasRare: 0 },
+  { id: "c010", name: "チンニ",               kana: "ちんに",                   cost: "2.0", hasRare: 0 },
+  { id: "c011", name: "ダークスター",         kana: "だーくすたー",             cost: "2.0", hasRare: 0 },
+  { id: "c012", name: "ヒビキ",               kana: "ひびき",                   cost: "2.0", hasRare: 2 },
+  { id: "c013", name: "スティレット",         kana: "すてぃれっと",             cost: "2.0", hasRare: 0 },
+  { id: "c014", name: "ボルゾイ",             kana: "ぼるぞい",                 cost: "2.0", hasRare: 1 },
+  { id: "c015", name: "キャッティ",           kana: "きゃってぃ",               cost: "2.0", hasRare: 1 },
+  { id: "c016", name: "ブリーカー",           kana: "ぶりーかー",               cost: "2.0", hasRare: 1 },
+  { id: "c017", name: "ガラハッド",           kana: "がらはっど",               cost: "2.0", hasRare: 0 },
+  { id: "c018", name: "フランカー",           kana: "ふらんかー",               cost: "2.0", hasRare: 1 },
+  { id: "c019", name: "アイスリン",           kana: "あいすりん",               cost: "2.0", hasRare: 1 },
+  { id: "c020", name: "クリスタ",             kana: "くりすた",                 cost: "2.0", hasRare: 3 },
+  { id: "c021", name: "タチアナ",             kana: "たちあな",                 cost: "2.0", hasRare: 1 },
+  { id: "c022", name: "フィービー",           kana: "ふぃーびー",               cost: "2.0", hasRare: 2 },
+
+  // --- コスト 1.5 ---
+  { id: "c001", name: "オーキッド",           kana: "おーきっど",               cost: "1.5", hasRare: 0 },
+  { id: "c002", name: "スノーウォル",         kana: "すのーうぉる",             cost: "1.5", hasRare: 0 },
+  { id: "c003", name: "カタリナ",             kana: "かたりな",                 cost: "1.5", hasRare: 0 },
+  { id: "c004", name: "ローランド",           kana: "ろーらんど",               cost: "1.5", hasRare: 0 },
+  { id: "c005", name: "ヤミン",               kana: "やみん",                   cost: "1.5", hasRare: 2 },
+
+];

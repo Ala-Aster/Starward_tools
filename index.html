@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星之翼 ツール</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --border: #2a2a3a;
+            --text: #e8e8f0;
+            --sub: #7070a0;
+            --accent: #00ffcc;
+            --accent2: #7060ff;
+            --card-bg: #16161f;
+        }
+        [data-theme="light"] {
+            --bg: #f0f0f5;
+            --surface: #ffffff;
+            --border: #d0d0e0;
+            --text: #1a1a2e;
+            --sub: #7070a0;
+            --accent: #0066cc;
+            --accent2: #6040dd;
+            --card-bg: #fafafe;
+        }
+        [data-theme="custom"] {
+            --bg: #f5f0e8;
+            --surface: #faf7f0;
+            --border: #d4c8b0;
+            --text: #1a1208;
+            --sub: #8a7050;
+            --accent: #c84800;
+            --accent2: #9a5a00;
+            --card-bg: #fff8ee;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            transition: background 0.3s, color 0.3s;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景グリッド */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .theme-bar {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 6px;
+            z-index: 100;
+        }
+        .btn-theme {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 5px 12px;
+            font-size: 12px;
+            font-family: 'Noto Sans JP', sans-serif;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-theme:hover, .btn-theme.active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        .hero-label {
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1.1;
+            letter-spacing: 0.05em;
+        }
+        .hero-title span {
+            color: var(--accent);
+        }
+        .hero-sub {
+            margin-top: 0.75rem;
+            font-size: 13px;
+            color: var(--sub);
+            letter-spacing: 0.1em;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        }
+        .card:hover::before { opacity: 1; }
+
+        .card-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+        }
+        .card-desc {
+            font-size: 13px;
+            color: var(--sub);
+            line-height: 1.6;
+        }
+        .card-arrow {
+            margin-top: auto;
+            font-size: 12px;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            opacity: 0;
+            transform: translateX(-4px);
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .card:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .footer {
+            margin-top: 3rem;
+            font-size: 11px;
+            color: var(--sub);
+            letter-spacing: 0.1em;
+        }
+
+        @media (max-width: 480px) {
+            .cards { grid-template-columns: 1fr; }
+            body { padding: 1rem; padding-top: 4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="theme-bar">
+    <button class="btn-theme" onclick="setTheme('dark')" id="t-dark">ダーク</button>
+    <button class="btn-theme" onclick="setTheme('light')" id="t-light">ライト</button>
+    <button class="btn-theme" onclick="setTheme('custom')" id="t-custom">クリーム</button>
+</div>
+
+<div class="hero">
+    <div class="hero-label">Starward Tools</div>
+    <h1 class="hero-title">星之翼<span> /</span> TOOLS</h1>
+    <p class="hero-sub">ツールを選択してください</p>
+</div>
+
+<div class="cards">
+    <a class="card" href="random/">
+        <div class="card-icon">🎲</div>
+        <div class="card-title">RANDOM SELECT</div>
+        <div class="card-desc">コストやBAN設定をカスタマイズして、ランダムにキャラクターを選出します。</div>
+        <div class="card-arrow">OPEN →</div>
+    </a>
+    <a class="card" href="database/">
+        <div class="card-icon">📖</div>
+        <div class="card-title">MOVE DATABASE</div>
+        <div class="card-desc">キャラクターごとの技・コンボを登録・管理・比較できる攻略データベースです。</div>
+        <div class="card-arrow">OPEN →</div>
+    </a>
+</div>
+
+<div class="footer">© 星之翼 Fan Tools — Unofficial</div>
+
+<script>
+    const THEME_KEY = 'starward_theme';
+
+    function setTheme(name) {
+        if (name === 'dark') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', name);
+        }
+        localStorage.setItem(THEME_KEY, name);
+        document.querySelectorAll('.btn-theme').forEach(b => b.classList.remove('active'));
+        document.getElementById('t-' + name)?.classList.add('active');
+    }
+
+    // ページ読み込み時にテーマを復元
+    const saved = localStorage.getItem(THEME_KEY) || 'dark';
+    setTheme(saved);
+</script>
+</body>
+</html>
