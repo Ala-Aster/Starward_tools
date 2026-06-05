@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星之翼 技データベース</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --section-bg: #252525;
+            --card-bg: #2a2a2a;
+            --list-bg: #1a1a1a;
+            --text-main: #ffffff;
+            --text-sub: #aaa;
+            --accent-color: #00ffcc;
+            --border-color: #444;
+            --accent-bg: rgba(0,255,204,0.1);
+            --btn-text: #121212;
+            --info-bg: rgba(0,255,204,0.08);
+            --info-text: #00ffcc;
+            --info-border: rgba(0,255,204,0.3);
+            --success-bg: rgba(0,200,100,0.1);
+            --danger-text: #ff5555;
+            --font-mono: 'Courier New', monospace;
+            --font-sans: 'Helvetica Neue', Arial, sans-serif;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+        [data-theme="light"] {
+            --bg-color: #f5f5f7;
+            --container-bg: #ffffff;
+            --section-bg: #f0f0f2;
+            --card-bg: #e8e8ec;
+            --list-bg: #fafafa;
+            --text-main: #1d1d1f;
+            --text-sub: #555;
+            --accent-color: #0066cc;
+            --border-color: #ccc;
+            --accent-bg: rgba(0,102,204,0.1);
+            --btn-text: #ffffff;
+            --info-bg: rgba(0,102,204,0.08);
+            --info-text: #0066cc;
+            --info-border: rgba(0,102,204,0.3);
+            --success-bg: rgba(0,150,80,0.1);
+            --danger-text: #cc0000;
+        }
+        [data-theme="custom"] {
+            --bg-color: #fbf9f1;
+            --container-bg: #f7f4e9;
+            --section-bg: #eee9da;
+            --card-bg: #dfd9c6;
+            --list-bg: #fbf9f1;
+            --text-main: #000;
+            --text-sub: #444;
+            --accent-color: #d35400;
+            --border-color: #cca47e;
+            --accent-bg: rgba(211,84,0,0.1);
+            --btn-text: #ffffff;
+            --info-bg: rgba(211,84,0,0.08);
+            --info-text: #d35400;
+            --info-border: rgba(211,84,0,0.3);
+            --success-bg: rgba(100,150,0,0.1);
+            --danger-text: #aa2200;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+        }
+        .back-link {
+            color: var(--accent-color); text-decoration: none;
+            font-size: 13px; border: 1px solid var(--border-color);
+            padding: 5px 12px; border-radius: 20px; transition: 0.2s;
+        }
+        .back-link:hover { border-color: var(--accent-color); }
+        .page-title { font-size: 20px; font-weight: bold; color: var(--accent-color); }
+        .theme-switcher { display: flex; gap: 5px; }
+        .btn-theme {
+            background: var(--section-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 5px 12px;
+            font-size: 12px; border-radius: 20px; cursor: pointer; transition: 0.2s;
+            font-family: var(--font-sans);
+        }
+        .btn-theme:hover, .btn-theme.active { border-color: var(--accent-color); color: var(--accent-color); }
+
+        .layout { display: grid; grid-template-columns: 220px 1fr; gap: 16px; }
+
+        /* サイドバー */
+        .sidebar { display: flex; flex-direction: column; gap: 10px; }
+        .sidebar-section {
+            background: var(--container-bg); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 12px;
+        }
+        .sidebar-title {
+            font-size: 11px; font-weight: 600; color: var(--text-sub);
+            text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px;
+        }
+        .search-input {
+            width: 100%; padding: 6px 10px; font-size: 13px;
+            background: var(--list-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); border-radius: 6px;
+            margin-bottom: 8px; font-family: var(--font-sans);
+        }
+        .cost-filter-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+        .cost-pill {
+            padding: 3px 10px; border: 1px solid var(--border-color);
+            border-radius: 99px; font-size: 11px; cursor: pointer;
+            background: var(--bg-color); color: var(--text-sub); transition: 0.15s;
+        }
+        .cost-pill.active { background: var(--accent-bg); color: var(--accent-color); border-color: var(--accent-color); }
+        .char-list { display: flex; flex-direction: column; gap: 3px; max-height: 400px; overflow-y: auto; }
+        .char-item {
+            padding: 7px 10px; border-radius: 6px; cursor: pointer;
+            font-size: 13px; display: flex; align-items: center; justify-content: space-between;
+            transition: background 0.1s; color: var(--text-main);
+        }
+        .char-item:hover { background: var(--section-bg); }
+        .char-item.active { background: var(--accent-bg); color: var(--accent-color); font-weight: 600; }
+        .char-cost-badge {
+            font-size: 10px; padding: 1px 6px; border-radius: 99px;
+            background: var(--section-bg); color: var(--text-sub);
+        }
+        .add-char-form { display: flex; flex-direction: column; gap: 6px; }
+        .add-char-form input, .add-char-form select {
+            padding: 6px 8px; font-size: 12px;
+            background: var(--list-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); border-radius: 6px;
+            font-family: var(--font-sans);
+        }
+        .btn-add {
+            padding: 6px; font-size: 12px; font-weight: 600;
+            background: var(--accent-color); color: var(--btn-text);
+            border: none; border-radius: 6px; cursor: pointer;
+            font-family: var(--font-sans);
+        }
+
+        /* メインパネル */
+        .main-panel { min-width: 0; }
+        .tab-bar { display: flex; gap: 6px; margin-bottom: 12px; }
+        .tab {
+            padding: 5px 16px; border: 1px solid var(--border-color);
+            border-radius: 99px; font-size: 13px; cursor: pointer;
+            background: var(--container-bg); color: var(--text-sub);
+            transition: 0.15s; font-family: var(--font-sans);
+        }
+        .tab.active { background: var(--info-bg); color: var(--info-text); border-color: var(--info-border); font-weight: 600; }
+
+        .panel { background: var(--container-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px; }
+        .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .panel-title { font-size: 18px; font-weight: 700; }
+        .btn-danger {
+            padding: 4px 12px; font-size: 12px;
+            background: none; border: 1px solid var(--border-color);
+            color: var(--danger-text); border-radius: 6px; cursor: pointer;
+            font-family: var(--font-sans);
+        }
+        .tbl-wrap { overflow-x: auto; margin-bottom: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th {
+            text-align: left; font-size: 11px; font-weight: 600;
+            color: var(--text-sub); padding: 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer; white-space: nowrap; user-select: none;
+        }
+        th:hover { color: var(--text-main); }
+        th.sorted { color: var(--accent-color); }
+        td { padding: 7px 8px; border-bottom: 1px solid var(--list-bg); vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--section-bg); }
+        .badge-f { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: rgba(255,100,50,0.15); color: #ff8060; font-family: var(--font-mono); }
+        .hb-strong { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(0,200,120,0.15); color: #00c878; }
+        .hb-normal { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--section-bg); color: var(--text-sub); }
+        .hb-weak   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(255,80,80,0.12); color: #ff6060; }
+        .mono { font-family: var(--font-mono); font-size: 12px; background: var(--section-bg); padding: 2px 6px; border-radius: 4px; color: var(--text-sub); }
+        .bar-wrap { display: flex; align-items: center; gap: 6px; }
+        .bar-bg { flex: 1; height: 5px; background: var(--section-bg); border-radius: 3px; overflow: hidden; min-width: 40px; }
+        .bar-fill { height: 100%; border-radius: 3px; background: var(--accent-color); }
+        .dmg-val { font-size: 13px; font-weight: 600; min-width: 28px; }
+        .del-btn { background: none; border: none; cursor: pointer; color: var(--text-sub); font-size: 13px; padding: 2px 4px; }
+        .del-btn:hover { color: var(--danger-text); }
+
+        .add-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr .7fr .7fr .7fr 1fr auto;
+            gap: 6px; align-items: center;
+            padding-top: 10px; border-top: 1px solid var(--border-color);
+        }
+        .add-row input, .add-row select {
+            padding: 5px 8px; font-size: 12px;
+            background: var(--list-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); border-radius: 6px;
+            font-family: var(--font-sans);
+        }
+        .btn-sm {
+            padding: 5px 10px; font-size: 12px; font-weight: 600;
+            background: var(--accent-color); color: var(--btn-text);
+            border: none; border-radius: 6px; cursor: pointer; white-space: nowrap;
+            font-family: var(--font-sans);
+        }
+
+        /* コンボ */
+        .combo-item { display: flex; gap: 8px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--list-bg); }
+        .combo-item:last-child { border-bottom: none; }
+        .combo-input-text { font-family: var(--font-mono); font-size: 12px; color: var(--text-sub); flex: 1; }
+        .combo-meta { font-size: 12px; color: var(--text-sub); white-space: nowrap; }
+        .add-combo-row { display: grid; grid-template-columns: 2fr .8fr 1.5fr auto; gap: 6px; align-items: center; padding-top: 10px; border-top: 1px solid var(--border-color); }
+        .add-combo-row input { padding: 5px 8px; font-size: 12px; background: var(--list-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; font-family: var(--font-sans); }
+
+        /* メモ */
+        .memo-area {
+            width: 100%; min-height: 100px; padding: 10px;
+            background: var(--list-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            font-size: 13px; font-family: var(--font-sans); resize: vertical;
+        }
+        .hint { font-size: 11px; color: var(--text-sub); margin-top: 5px; }
+
+        /* 比較タブ */
+        .compare-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+        .compare-controls input, .compare-controls select { padding: 5px 8px; font-size: 12px; background: var(--list-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; font-family: var(--font-sans); }
+        .char-sel-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+        .char-sel-pill { padding: 4px 12px; border: 1px solid var(--border-color); border-radius: 99px; font-size: 12px; cursor: pointer; background: var(--container-bg); color: var(--text-sub); }
+        .char-sel-pill.sel-0 { background: rgba(96,80,255,0.15); color: #a090ff; border-color: #a090ff; }
+        .char-sel-pill.sel-1 { background: rgba(0,200,120,0.12); color: #00c878; border-color: #00c878; }
+        .char-sel-pill.sel-2 { background: rgba(255,100,60,0.12); color: #ff8060; border-color: #ff8060; }
+        .char-sel-pill.sel-3 { background: rgba(0,160,255,0.12); color: #60c0ff; border-color: #60c0ff; }
+        .compare-char-tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 600; }
+        .cct0 { background: rgba(96,80,255,0.15); color: #a090ff; }
+        .cct1 { background: rgba(0,200,120,0.12); color: #00c878; }
+        .cct2 { background: rgba(255,100,60,0.12); color: #ff8060; }
+        .cct3 { background: rgba(0,160,255,0.12); color: #60c0ff; }
+        .bar-colors { --b0:#a090ff; --b1:#00c878; --b2:#ff8060; --b3:#60c0ff; }
+        .best-row td { background: var(--success-bg); }
+        .compare-info { font-size: 12px; color: var(--info-text); background: var(--info-bg); padding: 6px 12px; border-radius: 6px; margin-bottom: 8px; }
+
+        .empty { text-align: center; padding: 2rem; color: var(--text-sub); font-size: 14px; }
+        .no-select { text-align: center; padding: 3rem; color: var(--text-sub); font-size: 14px; }
+
+        @media (max-width: 700px) {
+            .layout { grid-template-columns: 1fr; }
+            .add-row { grid-template-columns: 1fr 1fr; }
+            .add-combo-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a class="back-link" href="../">← トップへ戻る</a>
+    <span class="page-title">星之翼 技データベース</span>
+    <div class="theme-switcher">
+        <button class="btn-theme" onclick="setTheme('dark')"   id="t-dark">ダーク</button>
+        <button class="btn-theme" onclick="setTheme('light')"  id="t-light">ライト</button>
+        <button class="btn-theme" onclick="setTheme('custom')" id="t-custom">クリーム</button>
+    </div>
+</div>
+
+<div class="layout">
+    <!-- サイドバー -->
+    <div class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">キャラクター</div>
+            <input type="text" class="search-input" id="char-search" placeholder="キャラ名で絞り込み..." oninput="renderCharList()">
+            <div class="cost-filter-row" id="cost-filters">
+                <div class="cost-pill active" data-cost="" onclick="setCostFilter(this, '')">全て</div>
+                <div class="cost-pill" data-cost="3.0" onclick="setCostFilter(this,'3.0')">3.0</div>
+                <div class="cost-pill" data-cost="2.5" onclick="setCostFilter(this,'2.5')">2.5</div>
+                <div class="cost-pill" data-cost="2.0" onclick="setCostFilter(this,'2.0')">2.0</div>
+                <div class="cost-pill" data-cost="1.5" onclick="setCostFilter(this,'1.5')">1.5</div>
+            </div>
+            <div class="char-list" id="char-list"></div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">キャラ追加</div>
+            <div class="add-char-form">
+                <input type="text" id="nc-name" placeholder="キャラ名">
+                <select id="nc-cost">
+                    <option value="3.0">コスト 3.0</option>
+                    <option value="2.5">コスト 2.5</option>
+                    <option value="2.0">コスト 2.0</option>
+                    <option value="1.5">コスト 1.5</option>
+                </select>
+                <button class="btn-add" onclick="addChar()">＋ 追加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- メインパネル -->
+    <div class="main-panel">
+        <div class="tab-bar">
+            <button class="tab active" id="tab-moves"   onclick="switchTab('moves')">技一覧</button>
+            <button class="tab"        id="tab-combos"  onclick="switchTab('combos')">コンボ</button>
+            <button class="tab"        id="tab-memo"    onclick="switchTab('memo')">メモ</button>
+            <button class="tab"        id="tab-compare" onclick="switchTab('compare')">キャラ比較</button>
+        </div>
+
+        <!-- 技一覧 -->
+        <div id="view-moves" class="panel">
+            <div id="moves-content"></div>
+        </div>
+
+        <!-- コンボ -->
+        <div id="view-combos" class="panel" style="display:none">
+            <div id="combos-content"></div>
+        </div>
+
+        <!-- メモ -->
+        <div id="view-memo" class="panel" style="display:none">
+            <div id="memo-content"></div>
+        </div>
+
+        <!-- 比較 -->
+        <div id="view-compare" class="panel" style="display:none">
+            <div id="compare-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ★ ルートフォルダの共通データを読み込む -->
+<script src="../characters.js"></script>
+
+<script>
+const THEME_KEY = 'starward_theme';
+const DB_KEY    = 'starward_movedb';
+const HB_ORDER  = { 強:0, 普通:1, 弱:2 };
+const BAR_COLS  = ['#a090ff','#00c878','#ff8060','#60c0ff'];
+const CCT       = ['cct0','cct1','cct2','cct3'];
+
+// キャラデータを characters.js から初期化
+let chars = CHARACTER_DATA.map(c => ({
+    id: c.cost + '_' + c.id,
+    name: c.name,
+    cost: c.cost,
+    moves: [],
+    combos: [],
+    memo: ''
+}));
+
+let selId        = null;
+let activeTab    = 'moves';
+let sortKey      = null;
+let sortAsc      = true;
+let costFilter   = '';
+let compareSelIds = [];
+let cmpSortKey   = null;
+let cmpSortAsc   = true;
+
+// ---- LocalStorage ----
+function saveDB() {
+    localStorage.setItem(DB_KEY, JSON.stringify(chars));
+}
+function loadDB() {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return;
+    try {
+        const saved = JSON.parse(raw);
+        // characters.js のキャラ一覧をベースに、保存データをマージ
+        chars = CHARACTER_DATA.map(c => {
+            const key = c.cost + '_' + c.id;
+            const found = saved.find(s => s.id === key);
+            return found
+                ? { ...found, name: c.name, cost: c.cost }
+                : { id: key, name: c.name, cost: c.cost, moves: [], combos: [], memo: '' };
+        });
+        // 手動追加キャラ（characters.jsにないもの）も復元
+        saved.forEach(s => {
+            if (!chars.find(c => c.id === s.id)) chars.push(s);
+        });
+    } catch(e) { console.error(e); }
+}
+
+// ---- テーマ ----
+function setTheme(name) {
+    if (name === 'dark') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', name);
+    localStorage.setItem(THEME_KEY, name);
+    document.querySelectorAll('.btn-theme').forEach(b => b.classList.remove('active'));
+    document.getElementById('t-' + name)?.classList.add('active');
+}
+
+// ---- キャラリスト ----
+function setCostFilter(el, val) {
+    costFilter = val;
+    document.querySelectorAll('.cost-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    renderCharList();
+}
+
+function renderCharList() {
+    const q = document.getElementById('char-search').value.toLowerCase();
+    const list = chars.filter(c =>
+        c.name.toLowerCase().includes(q) && (!costFilter || c.cost === costFilter)
+    );
+    document.getElementById('char-list').innerHTML = list.map(c => `
+        <div class="char-item${selId === c.id ? ' active' : ''}" onclick="selectChar('${c.id}')">
+            <span>${c.name}</span>
+            <span class="char-cost-badge">${c.cost}</span>
+        </div>`).join('');
+}
+
+function selectChar(id) {
+    selId = id;
+    sortKey = null;
+    renderCharList();
+    renderActiveTab();
+}
+
+function addChar() {
+    const name = document.getElementById('nc-name').value.trim();
+    if (!name) return;
+    const cost = document.getElementById('nc-cost').value;
+    const id = 'custom_' + Date.now();
+    chars.push({ id, name, cost, moves: [], combos: [], memo: '' });
+    document.getElementById('nc-name').value = '';
+    saveDB();
+    renderCharList();
+}
+
+function deleteChar() {
+    if (!selId) return;
+    const c = chars.find(x => x.id === selId);
+    if (!confirm(`「${c.name}」のデータをすべて削除しますか？`)) return;
+    chars = chars.filter(x => x.id !== selId);
+    selId = null;
+    saveDB();
+    renderCharList();
+    renderActiveTab();
+}
+
+// ---- タブ切り替え ----
+function switchTab(tab) {
+    activeTab = tab;
+    ['moves','combos','memo','compare'].forEach(t => {
+        document.getElementById('view-' + t).style.display = t === tab ? 'block' : 'none';
+        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    });
+    renderActiveTab();
+}
+
+function renderActiveTab() {
+    if      (activeTab === 'moves')   renderMoves();
+    else if (activeTab === 'combos')  renderCombos();
+    else if (activeTab === 'memo')    renderMemo();
+    else if (activeTab === 'compare') renderCompare();
+}
+
+// ---- 技一覧 ----
+function getChar() { return chars.find(x => x.id === selId); }
+
+function renderMoves() {
+    const el = document.getElementById('moves-content');
+    const c = getChar();
+    if (!c) { el.innerHTML = '<div class="no-select">左のリストからキャラクターを選択してください</div>'; return; }
+
+    let moves = [...c.moves];
+    if (sortKey) {
+        moves.sort((a, b) => {
+            let av = a[sortKey], bv = b[sortKey];
+            if (sortKey === 'hitbox') { av = HB_ORDER[av]; bv = HB_ORDER[bv]; }
+            if (sortKey === 'startup' || sortKey === 'dmg') { av = +av || 0; bv = +bv || 0; }
+            return sortAsc ? (av < bv ? -1 : av > bv ? 1 : 0) : (av > bv ? -1 : av < bv ? 1 : 0);
+        });
+    }
+    const mx = moves.length ? Math.max(...moves.map(m => m.dmg), 1) : 1;
+
+    const sortArrow = key => key === sortKey ? (sortAsc ? ' ↑' : ' ↓') : ' ↕';
+    const thClick   = key => `onclick="doSort('${key}')"`;
+
+    el.innerHTML = `
+        <div class="panel-header">
+            <span class="panel-title">${c.name} <span style="font-size:13px;font-weight:400;color:var(--text-sub)">コスト ${c.cost}</span></span>
+            <button class="btn-danger" onclick="deleteChar()">削除</button>
+        </div>
+        <div class="tbl-wrap">
+        <table>
+            <thead><tr>
+                <th ${thClick('name')} class="${sortKey==='name'?'sorted':''}">技名${sortArrow('name')}</th>
+                <th ${thClick('input')} class="${sortKey==='input'?'sorted':''}">入力${sortArrow('input')}</th>
+                <th ${thClick('startup')} class="${sortKey==='startup'?'sorted':''}">発生${sortArrow('startup')}</th>
+                <th ${thClick('hitbox')} class="${sortKey==='hitbox'?'sorted':''}">判定${sortArrow('hitbox')}</th>
+                <th ${thClick('dmg')} class="${sortKey==='dmg'?'sorted':''}">ダメージ${sortArrow('dmg')}</th>
+                <th>備考</th>
+                <th></th>
+            </tr></thead>
+            <tbody>
+            ${moves.length ? moves.map((m, i) => {
+                const ri = c.moves.indexOf(m);
+                return `<tr>
+                    <td style="font-weight:600">${m.name}</td>
+                    <td><span class="mono">${m.input}</span></td>
+                    <td><span class="badge-f">${m.startup}F</span></td>
+                    <td><span class="${m.hitbox==='強'?'hb-strong':m.hitbox==='弱'?'hb-weak':'hb-normal'}">${m.hitbox}</span></td>
+                    <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(m.dmg/mx*100)}%"></div></div><span class="dmg-val">${m.dmg}</span></div></td>
+                    <td style="font-size:12px;color:var(--text-sub)">${m.note||''}</td>
+                    <td><button class="del-btn" onclick="delMove(${ri})">🗑</button></td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="7" class="empty">技が登録されていません</td></tr>'}
+            </tbody>
+        </table>
+        </div>
+        <div class="add-row">
+            <input type="text" id="m-name" placeholder="技名">
+            <input type="text" id="m-input" placeholder="入力 例:格闘">
+            <input type="number" id="m-startup" placeholder="発生F" min="1">
+            <select id="m-hitbox"><option value="強">強</option><option value="普通" selected>普通</option><option value="弱">弱</option></select>
+            <input type="number" id="m-dmg" placeholder="ダメ">
+            <input type="text" id="m-note" placeholder="備考">
+            <button class="btn-sm" onclick="addMove()">＋ 追加</button>
+        </div>`;
+}
+
+function doSort(key) {
+    if (sortKey === key) sortAsc = !sortAsc;
+    else { sortKey = key; sortAsc = true; }
+    renderMoves();
+}
+
+function addMove() {
+    const c = getChar();
+    const name = document.getElementById('m-name').value.trim();
+    if (!name) return;
+    c.moves.push({
+        name,
+        input:   document.getElementById('m-input').value.trim() || '—',
+        startup: parseInt(document.getElementById('m-startup').value) || 0,
+        hitbox:  document.getElementById('m-hitbox').value,
+        dmg:     parseInt(document.getElementById('m-dmg').value) || 0,
+        note:    document.getElementById('m-note').value.trim()
+    });
+    saveDB();
+    renderMoves();
+}
+
+function delMove(idx) {
+    const c = getChar();
+    c.moves.splice(idx, 1);
+    saveDB();
+    renderMoves();
+}
+
+// ---- コンボ ----
+function renderCombos() {
+    const el = document.getElementById('combos-content');
+    const c = getChar();
+    if (!c) { el.innerHTML = '<div class="no-select">左のリストからキャラクターを選択してください</div>'; return; }
+    el.innerHTML = `
+        <div class="panel-header"><span class="panel-title">${c.name} — コンボ</span></div>
+        ${c.combos.length ? c.combos.map((co, i) => `
+            <div class="combo-item">
+                <span class="combo-input-text">${co.input}</span>
+                <span class="combo-meta">ダメ: <strong>${co.dmg}</strong></span>
+                ${co.note ? `<span class="combo-meta" style="font-style:italic">${co.note}</span>` : ''}
+                <button class="del-btn" onclick="delCombo(${i})">🗑</button>
+            </div>`) .join('') : '<div class="empty">コンボが登録されていません</div>'}
+        <div class="add-combo-row">
+            <input type="text" id="co-input" placeholder="コンボ入力 例: 格闘→格闘→BA">
+            <input type="number" id="co-dmg" placeholder="合計ダメ">
+            <input type="text" id="co-note" placeholder="備考">
+            <button class="btn-sm" onclick="addCombo()">＋ 追加</button>
+        </div>`;
+}
+
+function addCombo() {
+    const c = getChar();
+    const input = document.getElementById('co-input').value.trim();
+    if (!input) return;
+    c.combos.push({ input, dmg: parseInt(document.getElementById('co-dmg').value)||0, note: document.getElementById('co-note').value.trim() });
+    saveDB();
+    renderCombos();
+}
+
+function delCombo(idx) {
+    getChar().combos.splice(idx, 1);
+    saveDB();
+    renderCombos();
+}
+
+// ---- メモ ----
+function renderMemo() {
+    const el = document.getElementById('memo-content');
+    const c = getChar();
+    if (!c) { el.innerHTML = '<div class="no-select">左のリストからキャラクターを選択してください</div>'; return; }
+    el.innerHTML = `
+        <div class="panel-header"><span class="panel-title">${c.name} — 攻略メモ</span></div>
+        <textarea class="memo-area" oninput="saveMemo(this.value)">${c.memo||''}</textarea>
+        <p class="hint">自動保存されます</p>`;
+}
+
+function saveMemo(val) {
+    const c = getChar();
+    if (c) { c.memo = val; saveDB(); }
+}
+
+// ---- 比較 ----
+function renderCompare() {
+    const el = document.getElementById('compare-content');
+    const allMoves = chars.filter(c => c.moves.length > 0 || compareSelIds.includes(c.id));
+
+    let rows = [];
+    compareSelIds.forEach(id => {
+        const c = chars.find(x => x.id === id);
+        if (!c) return;
+        c.moves.forEach(m => rows.push({ ...m, charId: id, charName: c.name }));
+    });
+
+    const q = (document.getElementById('cmp-search')?.value || '').toLowerCase();
+    const fh = document.getElementById('cmp-hitbox')?.value || '';
+    if (q)  rows = rows.filter(r => r.name.toLowerCase().includes(q) || r.input.toLowerCase().includes(q));
+    if (fh) rows = rows.filter(r => r.hitbox === fh);
+
+    if (cmpSortKey) {
+        rows.sort((a, b) => {
+            let av = a[cmpSortKey], bv = b[cmpSortKey];
+            if (cmpSortKey === 'hitbox') { av = HB_ORDER[av]; bv = HB_ORDER[bv]; }
+            if (cmpSortKey === 'startup' || cmpSortKey === 'dmg') { av = +av||0; bv = +bv||0; }
+            return cmpSortAsc ? (av<bv?-1:av>bv?1:0) : (av>bv?-1:av<bv?1:0);
+        });
+    }
+
+    const mx = rows.length ? Math.max(...rows.map(r => r.dmg), 1) : 1;
+    const mxDmg = rows.length ? Math.max(...rows.map(r => r.dmg)) : 0;
+    const cmpArrow = key => key === cmpSortKey ? (cmpSortAsc ? ' ↑' : ' ↓') : ' ↕';
+    const cmpTh = key => `onclick="doCmpSort('${key}')"`;
+
+    el.innerHTML = `
+        <div class="panel-header"><span class="panel-title">キャラ比較（最大4体）</span></div>
+        <div class="char-sel-row">${chars.map(c => {
+            const ci = compareSelIds.indexOf(c.id);
+            return `<div class="char-sel-pill${ci>=0?' sel-'+ci:''}" onclick="toggleCmpChar('${c.id}')">${c.name}</div>`;
+        }).join('')}</div>
+        ${compareSelIds.length ? `
+        <div class="compare-controls">
+            <input type="text" id="cmp-search" placeholder="技名・入力で絞り込み..." oninput="renderCompare()" value="${q}">
+            <select id="cmp-hitbox" onchange="renderCompare()">
+                <option value="">すべての判定</option>
+                <option value="強" ${fh==='強'?'selected':''}>強</option>
+                <option value="普通" ${fh==='普通'?'selected':''}>普通</option>
+                <option value="弱" ${fh==='弱'?'selected':''}>弱</option>
+            </select>
+        </div>
+        ${cmpSortKey ? `<div class="compare-info">「${cmpSortKey}」で${cmpSortAsc?'昇順':'降順'}ソート中 — ${rows.length}件</div>` : ''}
+        <div class="tbl-wrap">
+        <table>
+            <thead><tr>
+                <th>キャラ</th>
+                <th ${cmpTh('name')}>技名${cmpArrow('name')}</th>
+                <th ${cmpTh('input')}>入力${cmpArrow('input')}</th>
+                <th ${cmpTh('startup')}>発生${cmpArrow('startup')}</th>
+                <th ${cmpTh('hitbox')}>判定${cmpArrow('hitbox')}</th>
+                <th ${cmpTh('dmg')}>ダメージ${cmpArrow('dmg')}</th>
+                <th>備考</th>
+            </tr></thead>
+            <tbody>
+            ${rows.length ? rows.map(r => {
+                const ci = compareSelIds.indexOf(r.charId);
+                const barCol = BAR_COLS[ci] || BAR_COLS[0];
+                const isBest = r.dmg === mxDmg && mxDmg > 0;
+                return `<tr class="${isBest?'best-row':''}">
+                    <td><span class="compare-char-tag ${CCT[ci]||CCT[0]}">${r.charName}</span></td>
+                    <td style="font-weight:600">${r.name}</td>
+                    <td><span class="mono">${r.input}</span></td>
+                    <td><span class="badge-f">${r.startup}F</span></td>
+                    <td><span class="${r.hitbox==='強'?'hb-strong':r.hitbox==='弱'?'hb-weak':'hb-normal'}">${r.hitbox}</span></td>
+                    <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(r.dmg/mx*100)}%;background:${barCol}"></div></div><span class="dmg-val">${r.dmg}</span></div></td>
+                    <td style="font-size:12px;color:var(--text-sub)">${r.note||''}</td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="7" class="empty">条件に一致する技がありません</td></tr>'}
+            </tbody>
+        </table></div>` : '<div class="empty">上からキャラクターを選んでください（最大4体）</div>'}`;
+}
+
+function toggleCmpChar(id) {
+    const idx = compareSelIds.indexOf(id);
+    if (idx >= 0) compareSelIds.splice(idx, 1);
+    else if (compareSelIds.length < 4) compareSelIds.push(id);
+    renderCompare();
+}
+
+function doCmpSort(key) {
+    if (cmpSortKey === key) cmpSortAsc = !cmpSortAsc;
+    else { cmpSortKey = key; cmpSortAsc = true; }
+    renderCompare();
+}
+
+// ---- 初期化 ----
+window.onload = function() {
+    const saved = localStorage.getItem(THEME_KEY) || 'dark';
+    setTheme(saved);
+    loadDB();
+    renderCharList();
+    renderActiveTab();
+};
+</script>
+</body>
+</html>
