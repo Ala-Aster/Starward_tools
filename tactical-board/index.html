@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>戦術ボードツール</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>戦術ボード</h1>
+            <p class="subtitle">グリッド上に戦術を描画</p>
+        </header>
+
+        <div class="control-panel">
+            <div class="mode-section">
+                <h3>描画モード</h3>
+                <button id="freeDrawBtn" class="btn btn-mode active">自由描画</button>
+                <button id="eraserBtn" class="btn btn-mode">消しゴム</button>
+            </div>
+
+            <div class="pieces-section">
+                <h3>コマを配置</h3>
+                <div class="piece-buttons">
+                    <button id="pieceA" class="btn btn-piece piece-a">A</button>
+                    <button id="pieceB" class="btn btn-piece piece-b">B</button>
+                    <button id="pieceC" class="btn btn-piece piece-c">C</button>
+                    <button id="pieceD" class="btn btn-piece piece-d">D</button>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <p id="statusMsg" class="status-msg"></p>
+            </div>
+        </div>
+
+        <div class="board-container">
+            <canvas id="boardCanvas"></canvas>
+        </div>
+    </div>
+
+    <script src="grid.js"></script>
+    <script src="pieces.js"></script>
+    <script src="arrows.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
