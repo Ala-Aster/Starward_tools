@@ -9,6 +9,14 @@
 <body>
     <div class="container">
         <header>
+            <div class="header-top">
+                <a class="back-link" href="../">← トップへ戻る</a>
+                <div class="header-actions">
+                    <button id="undoBtn" class="btn btn-action" title="元に戻す (Ctrl+Z)">↩ Undo</button>
+                    <button id="resetBtn" class="btn btn-action btn-danger">🗑 リセット</button>
+                    <button id="saveImgBtn" class="btn btn-action btn-save">💾 画像保存</button>
+                </div>
+            </div>
             <h1>戦術ボード</h1>
             <p class="subtitle">グリッド上に戦術を描画</p>
         </header>
@@ -17,7 +25,17 @@
             <div class="mode-section">
                 <h3>描画モード</h3>
                 <button id="freeDrawBtn" class="btn btn-mode active">自由描画</button>
-                <button id="eraserBtn" class="btn btn-mode">消しゴム</button>
+                <button id="eraserBtn"   class="btn btn-mode">消しゴム</button>
+            </div>
+
+            <div class="color-section">
+                <h3>ペンの色</h3>
+                <div class="color-buttons">
+                    <button class="btn btn-color color-black active" data-color="#2c2c2c" title="黒"></button>
+                    <button class="btn btn-color color-blue"         data-color="#3498db" title="青"></button>
+                    <button class="btn btn-color color-red"          data-color="#e74c3c" title="赤"></button>
+                    <button class="btn btn-color color-green"        data-color="#27ae60" title="緑"></button>
+                </div>
             </div>
 
             <div class="pieces-section">
