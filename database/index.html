@@ -6,164 +6,67 @@
     <title>星之翼 技データベース</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --container-bg: #1e1e1e;
-            --section-bg: #252525;
-            --card-bg: #2a2a2a;
-            --list-bg: #1a1a1a;
-            --text-main: #ffffff;
-            --text-sub: #aaa;
-            --accent-color: #00ffcc;
-            --border-color: #444;
-            --accent-bg: rgba(0,255,204,0.1);
-            --btn-text: #121212;
-            --info-bg: rgba(0,255,204,0.08);
-            --info-text: #00ffcc;
-            --info-border: rgba(0,255,204,0.3);
-            --success-bg: rgba(0,200,100,0.1);
+            --bg-color: #121212; --container-bg: #1e1e1e; --section-bg: #252525;
+            --card-bg: #2a2a2a; --list-bg: #1a1a1a; --text-main: #ffffff;
+            --text-sub: #aaa; --accent-color: #00ffcc; --border-color: #444;
+            --accent-bg: rgba(0,255,204,0.1); --btn-text: #121212;
+            --info-bg: rgba(0,255,204,0.08); --info-text: #00ffcc;
+            --info-border: rgba(0,255,204,0.3); --success-bg: rgba(0,200,100,0.1);
             --font-mono: 'Courier New', monospace;
             --font-sans: 'Helvetica Neue', Arial, sans-serif;
-            --radius-md: 8px;
-            --radius-lg: 12px;
+            --radius-md: 8px; --radius-lg: 12px;
         }
         [data-theme="light"] {
-            --bg-color: #f5f5f7;
-            --container-bg: #ffffff;
-            --section-bg: #f0f0f2;
-            --card-bg: #e8e8ec;
-            --list-bg: #fafafa;
-            --text-main: #1d1d1f;
-            --text-sub: #555;
-            --accent-color: #0066cc;
-            --border-color: #ccc;
-            --accent-bg: rgba(0,102,204,0.1);
-            --btn-text: #ffffff;
-            --info-bg: rgba(0,102,204,0.08);
-            --info-text: #0066cc;
-            --info-border: rgba(0,102,204,0.3);
-            --success-bg: rgba(0,150,80,0.1);
+            --bg-color: #f5f5f7; --container-bg: #ffffff; --section-bg: #f0f0f2;
+            --card-bg: #e8e8ec; --list-bg: #fafafa; --text-main: #1d1d1f;
+            --text-sub: #555; --accent-color: #0066cc; --border-color: #ccc;
+            --accent-bg: rgba(0,102,204,0.1); --btn-text: #ffffff;
+            --info-bg: rgba(0,102,204,0.08); --info-text: #0066cc;
+            --info-border: rgba(0,102,204,0.3); --success-bg: rgba(0,150,80,0.1);
         }
         [data-theme="custom"] {
-            --bg-color: #fbf9f1;
-            --container-bg: #f7f4e9;
-            --section-bg: #eee9da;
-            --card-bg: #dfd9c6;
-            --list-bg: #fbf9f1;
-            --text-main: #000;
-            --text-sub: #444;
-            --accent-color: #d35400;
-            --border-color: #cca47e;
-            --accent-bg: rgba(211,84,0,0.1);
-            --btn-text: #ffffff;
-            --info-bg: rgba(211,84,0,0.08);
-            --info-text: #d35400;
-            --info-border: rgba(211,84,0,0.3);
-            --success-bg: rgba(100,150,0,0.1);
+            --bg-color: #fbf9f1; --container-bg: #f7f4e9; --section-bg: #eee9da;
+            --card-bg: #dfd9c6; --list-bg: #fbf9f1; --text-main: #000;
+            --text-sub: #444; --accent-color: #d35400; --border-color: #cca47e;
+            --accent-bg: rgba(211,84,0,0.1); --btn-text: #ffffff;
+            --info-bg: rgba(211,84,0,0.08); --info-text: #d35400;
+            --info-border: rgba(211,84,0,0.3); --success-bg: rgba(100,150,0,0.1);
         }
-
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: var(--font-sans);
-            background: var(--bg-color);
-            color: var(--text-main);
-            padding: 16px;
-            transition: background 0.3s, color 0.3s;
-        }
-        .top-bar {
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
-        }
-        .back-link {
-            color: var(--accent-color); text-decoration: none;
-            font-size: 13px; border: 1px solid var(--border-color);
-            padding: 5px 12px; border-radius: 20px; transition: 0.2s;
-        }
+        body { font-family: var(--font-sans); background: var(--bg-color); color: var(--text-main); padding: 16px; transition: background 0.3s, color 0.3s; }
+        .top-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .back-link { color: var(--accent-color); text-decoration: none; font-size: 13px; border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 20px; transition: 0.2s; }
         .back-link:hover { border-color: var(--accent-color); }
         .page-title { font-size: 20px; font-weight: bold; color: var(--accent-color); }
         .theme-switcher { display: flex; gap: 5px; }
-        .btn-theme {
-            background: var(--section-bg); color: var(--text-main);
-            border: 1px solid var(--border-color); padding: 5px 12px;
-            font-size: 12px; border-radius: 20px; cursor: pointer; transition: 0.2s;
-            font-family: var(--font-sans);
-        }
+        .btn-theme { background: var(--section-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 5px 12px; font-size: 12px; border-radius: 20px; cursor: pointer; transition: 0.2s; font-family: var(--font-sans); }
         .btn-theme:hover, .btn-theme.active { border-color: var(--accent-color); color: var(--accent-color); }
-
-        /* データなし警告 */
-        .no-data-bar {
-            background: rgba(255,180,0,0.08);
-            border: 1px solid rgba(255,180,0,0.3);
-            border-radius: var(--radius-lg);
-            padding: 10px 16px;
-            margin-bottom: 16px;
-            font-size: 13px;
-            color: #ffb400;
-            display: none;
-        }
+        .no-data-bar { background: rgba(255,180,0,0.08); border: 1px solid rgba(255,180,0,0.3); border-radius: var(--radius-lg); padding: 10px 16px; margin-bottom: 16px; font-size: 13px; color: #ffb400; display: none; }
         .no-data-bar.show { display: block; }
-
         .layout { display: grid; grid-template-columns: 220px 1fr; gap: 16px; }
-
-        /* サイドバー */
         .sidebar { display: flex; flex-direction: column; gap: 10px; }
-        .sidebar-section {
-            background: var(--container-bg); border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg); padding: 12px;
-        }
-        .sidebar-title {
-            font-size: 11px; font-weight: 600; color: var(--text-sub);
-            text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px;
-        }
-        .search-input {
-            width: 100%; padding: 6px 10px; font-size: 13px;
-            background: var(--list-bg); color: var(--text-main);
-            border: 1px solid var(--border-color); border-radius: 6px;
-            margin-bottom: 8px; font-family: var(--font-sans);
-        }
+        .sidebar-section { background: var(--container-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 12px; }
+        .sidebar-title { font-size: 11px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+        .search-input { width: 100%; padding: 6px 10px; font-size: 13px; background: var(--list-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 8px; font-family: var(--font-sans); }
         .cost-filter-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
-        .cost-pill {
-            padding: 3px 10px; border: 1px solid var(--border-color);
-            border-radius: 99px; font-size: 11px; cursor: pointer;
-            background: var(--bg-color); color: var(--text-sub); transition: 0.15s;
-        }
+        .cost-pill { padding: 3px 10px; border: 1px solid var(--border-color); border-radius: 99px; font-size: 11px; cursor: pointer; background: var(--bg-color); color: var(--text-sub); transition: 0.15s; }
         .cost-pill.active { background: var(--accent-bg); color: var(--accent-color); border-color: var(--accent-color); }
         .char-list { display: flex; flex-direction: column; gap: 3px; max-height: 500px; overflow-y: auto; }
-        .char-item {
-            padding: 7px 10px; border-radius: 6px; cursor: pointer;
-            font-size: 13px; display: flex; align-items: center; justify-content: space-between;
-            transition: background 0.1s; color: var(--text-main);
-        }
+        .char-item { padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: space-between; transition: background 0.1s; color: var(--text-main); }
         .char-item:hover { background: var(--section-bg); }
         .char-item.active { background: var(--accent-bg); color: var(--accent-color); font-weight: 600; }
         .char-item.no-data { opacity: 0.4; }
-        .char-cost-badge {
-            font-size: 10px; padding: 1px 6px; border-radius: 99px;
-            background: var(--section-bg); color: var(--text-sub);
-        }
-
-        /* メインパネル */
+        .char-cost-badge { font-size: 10px; padding: 1px 6px; border-radius: 99px; background: var(--section-bg); color: var(--text-sub); }
         .main-panel { min-width: 0; }
-        .tab-bar { display: flex; gap: 6px; margin-bottom: 12px; }
-        .tab {
-            padding: 5px 16px; border: 1px solid var(--border-color);
-            border-radius: 99px; font-size: 13px; cursor: pointer;
-            background: var(--container-bg); color: var(--text-sub);
-            transition: 0.15s; font-family: var(--font-sans);
-        }
+        .tab-bar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+        .tab { padding: 5px 16px; border: 1px solid var(--border-color); border-radius: 99px; font-size: 13px; cursor: pointer; background: var(--container-bg); color: var(--text-sub); transition: 0.15s; font-family: var(--font-sans); }
         .tab.active { background: var(--info-bg); color: var(--info-text); border-color: var(--info-border); font-weight: 600; }
-
         .panel { background: var(--container-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px; }
         .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
         .panel-title { font-size: 18px; font-weight: 700; }
-
         .tbl-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th {
-            text-align: left; font-size: 11px; font-weight: 600;
-            color: var(--text-sub); padding: 6px 8px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer; white-space: nowrap; user-select: none;
-        }
+        th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-sub); padding: 6px 8px; border-bottom: 1px solid var(--border-color); cursor: pointer; white-space: nowrap; user-select: none; }
         th:hover { color: var(--text-main); }
         th.sorted { color: var(--accent-color); }
         td { padding: 7px 8px; border-bottom: 1px solid var(--list-bg); vertical-align: middle; }
@@ -178,20 +81,21 @@
         .bar-bg { flex: 1; height: 5px; background: var(--section-bg); border-radius: 3px; overflow: hidden; min-width: 40px; }
         .bar-fill { height: 100%; border-radius: 3px; background: var(--accent-color); }
         .dmg-val { font-size: 13px; font-weight: 600; min-width: 28px; }
-
-        /* コンボ */
         .combo-item { display: flex; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--list-bg); }
         .combo-item:last-child { border-bottom: none; }
         .combo-input-text { font-family: var(--font-mono); font-size: 12px; color: var(--text-sub); flex: 1; }
         .combo-meta { font-size: 12px; color: var(--text-sub); white-space: nowrap; }
+        .memo-body { padding: 12px; background: var(--list-bg); border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; min-height: 80px; color: var(--text-main); }
 
-        /* メモ */
-        .memo-body {
-            padding: 12px; background: var(--list-bg);
-            border: 1px solid var(--border-color); border-radius: 8px;
-            font-size: 13px; line-height: 1.7; white-space: pre-wrap;
-            min-height: 80px; color: var(--text-main);
-        }
+        /* ステータスパネル（閲覧用） */
+        .status-panel { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+        .status-img-wrap { flex-shrink: 0; }
+        .status-img { width: 140px; height: 140px; border-radius: 10px; border: 2px solid var(--accent-color); object-fit: cover; background: var(--list-bg); }
+        .status-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; flex: 1; min-width: 240px; }
+        .status-card { background: var(--list-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 16px; }
+        .status-card-label { font-size: 11px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+        .status-card-value { font-size: 22px; font-weight: 700; color: var(--accent-color); }
+        .status-card-value.empty { color: var(--text-sub); font-size: 16px; }
 
         /* 比較タブ */
         .compare-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
@@ -210,12 +114,11 @@
         .cct3 { background: rgba(0,160,255,0.12); color: #60c0ff; }
         .best-row td { background: var(--success-bg); }
         .compare-info { font-size: 12px; color: var(--info-text); background: var(--info-bg); padding: 6px 12px; border-radius: 6px; margin-bottom: 8px; }
-
         .empty { text-align: center; padding: 2rem; color: var(--text-sub); font-size: 14px; }
         .no-select { text-align: center; padding: 3rem; color: var(--text-sub); font-size: 14px; }
-
         @media (max-width: 700px) {
             .layout { grid-template-columns: 1fr; }
+            .status-cards { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -231,13 +134,11 @@
     </div>
 </div>
 
-<!-- movedata.js がない場合の警告 -->
 <div class="no-data-bar" id="no-data-bar">
     ⚠️ movedata.js が見つかりません。edit.html でデータを入力してエクスポートし、database/ フォルダに追加してください。
 </div>
 
 <div class="layout">
-    <!-- サイドバー -->
     <div class="sidebar">
         <div class="sidebar-section">
             <div class="sidebar-title">キャラクター</div>
@@ -253,15 +154,16 @@
         </div>
     </div>
 
-    <!-- メインパネル -->
     <div class="main-panel">
         <div class="tab-bar">
-            <button class="tab active" id="tab-moves"   onclick="switchTab('moves')">技一覧</button>
+            <button class="tab active" id="tab-status"  onclick="switchTab('status')">ステータス</button>
+            <button class="tab"        id="tab-moves"   onclick="switchTab('moves')">技一覧</button>
             <button class="tab"        id="tab-combos"  onclick="switchTab('combos')">コンボ</button>
             <button class="tab"        id="tab-memo"    onclick="switchTab('memo')">メモ</button>
             <button class="tab"        id="tab-compare" onclick="switchTab('compare')">キャラ比較</button>
         </div>
-        <div id="view-moves"   class="panel"><div id="moves-content"></div></div>
+        <div id="view-status"  class="panel"><div id="status-content"></div></div>
+        <div id="view-moves"   class="panel" style="display:none"><div id="moves-content"></div></div>
         <div id="view-combos"  class="panel" style="display:none"><div id="combos-content"></div></div>
         <div id="view-memo"    class="panel" style="display:none"><div id="memo-content"></div></div>
         <div id="view-compare" class="panel" style="display:none"><div id="compare-content"></div></div>
@@ -271,43 +173,30 @@
 <script src="../characters.js"></script>
 <script src="movedata.js" onerror="onMoveDataMissing()"></script>
 <script>
-const THEME_KEY = 'starward_theme';
-const HB_ORDER  = { 強:0, 普通:1, 弱:2 };
-const BAR_COLS  = ['#a090ff','#00c878','#ff8060','#60c0ff'];
-const CCT       = ['cct0','cct1','cct2','cct3'];
+const THEME_KEY  = 'starward_theme';
+const HB_ORDER   = { 強:0, 普通:1, 弱:2 };
+const BAR_COLS   = ['#a090ff','#00c878','#ff8060','#60c0ff'];
+const CCT        = ['cct0','cct1','cct2','cct3'];
+const IMAGE_BASE = 'https://raw.githubusercontent.com/Ala-Aster/Starward_tools/main/image';
+const DEFAULT_STATUS = { hp: 0, boostCount: 0, boostDist: 0, lockDist: 0 };
 
-let moveDataLoaded = false;
+function onMoveDataMissing() { document.getElementById('no-data-bar').classList.add('show'); }
 
-function onMoveDataMissing() {
-    document.getElementById('no-data-bar').classList.add('show');
-}
-
-// characters.js をベースに、movedata.js のデータをマージ
 let chars = CHARACTER_DATA.map(c => {
     const key = c.cost + '_' + c.id;
-    const md = (typeof MOVE_DATA !== 'undefined')
-        ? MOVE_DATA.find(d => d.id === key)
-        : null;
+    const md = (typeof MOVE_DATA !== 'undefined') ? MOVE_DATA.find(d => d.id === key) : null;
     return {
-        id: key,
-        name: c.name,
-        cost: c.cost,
+        id: key, name: c.name, cost: c.cost,
+        status: { ...DEFAULT_STATUS, ...(md?.status||{}) },
         moves:  md?.moves  || [],
         combos: md?.combos || [],
         memo:   md?.memo   || ''
     };
 });
 
-let selId         = null;
-let activeTab     = 'moves';
-let sortKey       = null;
-let sortAsc       = true;
-let costFilter    = '';
-let compareSelIds = [];
-let cmpSortKey    = null;
-let cmpSortAsc    = true;
+let selId = null, activeTab = 'status', sortKey = null, sortAsc = true;
+let costFilter = '', compareSelIds = [], cmpSortKey = null, cmpSortAsc = true;
 
-// ---- テーマ ----
 function setTheme(name) {
     if (name === 'dark') document.documentElement.removeAttribute('data-theme');
     else document.documentElement.setAttribute('data-theme', name);
@@ -316,74 +205,102 @@ function setTheme(name) {
     document.getElementById('t-' + name)?.classList.add('active');
 }
 
-// ---- キャラリスト ----
 function setCostFilter(el, val) {
     costFilter = val;
     document.querySelectorAll('.cost-pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    renderCharList();
+    el.classList.add('active'); renderCharList();
 }
-
 function renderCharList() {
     const q = document.getElementById('char-search').value.toLowerCase();
-    const list = chars.filter(c =>
-        c.name.toLowerCase().includes(q) && (!costFilter || c.cost === costFilter)
-    );
+    const list = chars.filter(c => c.name.toLowerCase().includes(q) && (!costFilter || c.cost === costFilter));
     document.getElementById('char-list').innerHTML = list.map(c => {
-        const hasData = c.moves.length > 0 || c.combos.length > 0 || c.memo.trim();
-        return `
-        <div class="char-item${selId === c.id ? ' active' : ''}${!hasData ? ' no-data' : ''}" onclick="selectChar('${c.id}')">
+        const s = c.status;
+        const hasData = c.moves.length > 0 || c.combos.length > 0 || c.memo.trim()
+            || s.hp || s.boostCount || s.boostDist || s.lockDist;
+        return `<div class="char-item${selId===c.id?' active':''}${!hasData?' no-data':''}" onclick="selectChar('${c.id}')">
             <span>${c.name}</span>
             <span class="char-cost-badge">${c.cost}</span>
         </div>`;
     }).join('');
 }
+function selectChar(id) { selId = id; sortKey = null; renderCharList(); renderActiveTab(); }
 
-function selectChar(id) {
-    selId = id;
-    sortKey = null;
-    renderCharList();
-    renderActiveTab();
-}
-
-// ---- タブ切り替え ----
 function switchTab(tab) {
     activeTab = tab;
-    ['moves','combos','memo','compare'].forEach(t => {
-        document.getElementById('view-' + t).style.display = t === tab ? 'block' : 'none';
-        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    ['status','moves','combos','memo','compare'].forEach(t => {
+        document.getElementById('view-'+t).style.display = t===tab?'block':'none';
+        document.getElementById('tab-'+t).classList.toggle('active', t===tab);
     });
     renderActiveTab();
 }
-
 function renderActiveTab() {
-    if      (activeTab === 'moves')   renderMoves();
-    else if (activeTab === 'combos')  renderCombos();
-    else if (activeTab === 'memo')    renderMemo();
-    else if (activeTab === 'compare') renderCompare();
+    if      (activeTab==='status')  renderStatus();
+    else if (activeTab==='moves')   renderMoves();
+    else if (activeTab==='combos')  renderCombos();
+    else if (activeTab==='memo')    renderMemo();
+    else if (activeTab==='compare') renderCompare();
 }
 
-// ---- 技一覧（読み取り専用）----
 function getChar() { return chars.find(x => x.id === selId); }
 
+// ---- ステータス（閲覧用）----
+function renderStatus() {
+    const el = document.getElementById('status-content');
+    const c = getChar();
+    if (!c) { el.innerHTML = '<div class="no-select">左のリストからキャラクターを選択してください</div>'; return; }
+
+    const s = c.status;
+    const charData = CHARACTER_DATA.find(x => c.cost + '_' + x.id === c.id && x.cost === c.cost);
+    const imgUrl = charData ? `${IMAGE_BASE}/${c.cost}/${charData.id}.png` : '';
+
+    const val = (v, unit='') => v ? `<span class="status-card-value">${v}${unit}</span>` : `<span class="status-card-value empty">—</span>`;
+
+    el.innerHTML = `
+        <div class="panel-header">
+            <span class="panel-title">${c.name} <span style="font-size:13px;font-weight:400;color:var(--text-sub)">コスト ${c.cost}</span></span>
+        </div>
+        <div class="status-panel">
+            <div class="status-img-wrap">
+                <img class="status-img" src="${imgUrl}" alt="${c.name}" onerror="this.style.opacity='0.3'">
+            </div>
+            <div class="status-cards">
+                <div class="status-card">
+                    <div class="status-card-label">HP</div>
+                    ${val(s.hp)}
+                </div>
+                <div class="status-card">
+                    <div class="status-card-label">ブースト回数</div>
+                    ${val(s.boostCount, '回')}
+                </div>
+                <div class="status-card">
+                    <div class="status-card-label">ブースト距離</div>
+                    ${val(s.boostDist)}
+                </div>
+                <div class="status-card">
+                    <div class="status-card-label">ロック距離</div>
+                    ${val(s.lockDist)}
+                </div>
+            </div>
+        </div>`;
+}
+
+// ---- 技一覧（閲覧用）----
 function renderMoves() {
     const el = document.getElementById('moves-content');
     const c = getChar();
     if (!c) { el.innerHTML = '<div class="no-select">左のリストからキャラクターを選択してください</div>'; return; }
-
     let moves = [...c.moves];
     if (sortKey) {
         moves.sort((a, b) => {
-            let av = a[sortKey], bv = b[sortKey];
-            if (sortKey === 'hitbox') { av = HB_ORDER[av]; bv = HB_ORDER[bv]; }
-            if (sortKey === 'startup' || sortKey === 'dmg') { av = +av||0; bv = +bv||0; }
-            return sortAsc ? (av<bv?-1:av>bv?1:0) : (av>bv?-1:av<bv?1:0);
+            let av=a[sortKey], bv=b[sortKey];
+            if (sortKey==='hitbox') { av=HB_ORDER[av]; bv=HB_ORDER[bv]; }
+            if (sortKey==='startup'||sortKey==='dmg') { av=+av||0; bv=+bv||0; }
+            return sortAsc?(av<bv?-1:av>bv?1:0):(av>bv?-1:av<bv?1:0);
         });
     }
-    const mx = moves.length ? Math.max(...moves.map(m => m.dmg), 1) : 1;
-    const sa = key => key === sortKey ? (sortAsc ? ' ↑' : ' ↓') : ' ↕';
+    const mx = moves.length ? Math.max(...moves.map(m=>m.dmg),1) : 1;
+    const sa = key => key===sortKey?(sortAsc?' ↑':' ↓'):' ↕';
     const th = key => `onclick="doSort('${key}')"`;
-
     el.innerHTML = `
         <div class="panel-header">
             <span class="panel-title">${c.name} <span style="font-size:13px;font-weight:400;color:var(--text-sub)">コスト ${c.cost}</span></span>
@@ -398,7 +315,7 @@ function renderMoves() {
                 <th>備考</th>
             </tr></thead>
             <tbody>
-            ${moves.length ? moves.map(m => `<tr>
+            ${moves.length ? moves.map(m=>`<tr>
                 <td style="font-weight:600">${m.name}</td>
                 <td><span class="mono">${m.input}</span></td>
                 <td><span class="badge-f">${m.startup}F</span></td>
@@ -409,79 +326,65 @@ function renderMoves() {
             </tbody>
         </table></div>`;
 }
+function doSort(key) { if(sortKey===key) sortAsc=!sortAsc; else{sortKey=key;sortAsc=true;} renderMoves(); }
 
-function doSort(key) {
-    if (sortKey === key) sortAsc = !sortAsc;
-    else { sortKey = key; sortAsc = true; }
-    renderMoves();
-}
-
-// ---- コンボ（読み取り専用）----
+// ---- コンボ（閲覧用）----
 function renderCombos() {
     const el = document.getElementById('combos-content');
     const c = getChar();
     if (!c) { el.innerHTML = '<div class="no-select">左のリストからキャラクターを選択してください</div>'; return; }
     el.innerHTML = `
         <div class="panel-header"><span class="panel-title">${c.name} — コンボ</span></div>
-        ${c.combos.length ? c.combos.map(co => `
+        ${c.combos.length ? c.combos.map(co=>`
             <div class="combo-item">
                 <span class="combo-input-text">${co.input}</span>
                 <span class="combo-meta">ダメ: <strong>${co.dmg}</strong></span>
-                ${co.note ? `<span class="combo-meta" style="font-style:italic">${co.note}</span>` : ''}
+                ${co.note?`<span class="combo-meta" style="font-style:italic">${co.note}</span>`:''}
             </div>`).join('') : '<div class="empty">データが登録されていません</div>'}`;
 }
 
-// ---- メモ（読み取り専用）----
+// ---- メモ（閲覧用）----
 function renderMemo() {
     const el = document.getElementById('memo-content');
     const c = getChar();
     if (!c) { el.innerHTML = '<div class="no-select">左のリストからキャラクターを選択してください</div>'; return; }
     el.innerHTML = `
         <div class="panel-header"><span class="panel-title">${c.name} — 攻略メモ</span></div>
-        ${c.memo.trim()
-            ? `<div class="memo-body">${c.memo.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`
-            : '<div class="empty">メモが登録されていません</div>'}`;
+        ${c.memo.trim() ? `<div class="memo-body">${c.memo.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>` : '<div class="empty">メモが登録されていません</div>'}`;
 }
 
 // ---- 比較タブ ----
 function renderCompare() {
     const el = document.getElementById('compare-content');
-    // データのあるキャラのみ選択可能
-    const available = chars.filter(c => c.moves.length > 0);
-
     let rows = [];
     compareSelIds.forEach(id => {
         const c = chars.find(x => x.id === id);
         if (!c) return;
         c.moves.forEach(m => rows.push({ ...m, charId: id, charName: c.name }));
     });
-
-    const q  = (document.getElementById('cmp-search')?.value || '').toLowerCase();
-    const fh = document.getElementById('cmp-hitbox')?.value || '';
-    if (q)  rows = rows.filter(r => r.name.toLowerCase().includes(q) || r.input.toLowerCase().includes(q));
-    if (fh) rows = rows.filter(r => r.hitbox === fh);
-
+    const q  = (document.getElementById('cmp-search')?.value||'').toLowerCase();
+    const fh = document.getElementById('cmp-hitbox')?.value||'';
+    if (q)  rows = rows.filter(r => r.name.toLowerCase().includes(q)||r.input.toLowerCase().includes(q));
+    if (fh) rows = rows.filter(r => r.hitbox===fh);
     if (cmpSortKey) {
-        rows.sort((a, b) => {
-            let av = a[cmpSortKey], bv = b[cmpSortKey];
-            if (cmpSortKey === 'hitbox') { av = HB_ORDER[av]; bv = HB_ORDER[bv]; }
-            if (cmpSortKey === 'startup' || cmpSortKey === 'dmg') { av = +av||0; bv = +bv||0; }
-            return cmpSortAsc ? (av<bv?-1:av>bv?1:0) : (av>bv?-1:av<bv?1:0);
+        rows.sort((a,b) => {
+            let av=a[cmpSortKey],bv=b[cmpSortKey];
+            if(cmpSortKey==='hitbox'){av=HB_ORDER[av];bv=HB_ORDER[bv];}
+            if(cmpSortKey==='startup'||cmpSortKey==='dmg'){av=+av||0;bv=+bv||0;}
+            return cmpSortAsc?(av<bv?-1:av>bv?1:0):(av>bv?-1:av<bv?1:0);
         });
     }
-
-    const mx    = rows.length ? Math.max(...rows.map(r => r.dmg), 1) : 1;
-    const mxDmg = rows.length ? Math.max(...rows.map(r => r.dmg)) : 0;
-    const ca    = key => key === cmpSortKey ? (cmpSortAsc ? ' ↑' : ' ↓') : ' ↕';
-    const cth   = key => `onclick="doCmpSort('${key}')"`;
-
+    const mx=rows.length?Math.max(...rows.map(r=>r.dmg),1):1;
+    const mxDmg=rows.length?Math.max(...rows.map(r=>r.dmg)):0;
+    const ca=key=>key===cmpSortKey?(cmpSortAsc?' ↑':' ↓'):' ↕';
+    const cth=key=>`onclick="doCmpSort('${key}')"`;
     el.innerHTML = `
         <div class="panel-header"><span class="panel-title">キャラ比較（最大4体）</span></div>
-        <div class="char-sel-row">${chars.map(c => {
-            const ci = compareSelIds.indexOf(c.id);
-            const hasData = c.moves.length > 0;
-            return `<div class="char-sel-pill${ci>=0?' sel-'+ci:''}${!hasData?' no-data':''}"
-                onclick="${hasData ? `toggleCmpChar('${c.id}')` : ''}">${c.name}</div>`;
+        <div class="char-sel-row">${chars.map(c=>{
+            const ci=compareSelIds.indexOf(c.id);
+            const hasData=c.moves.length>0;
+            const clickAttr = hasData ? 'toggleCmpChar("' + c.id + '")' : '';
+            return `<div class="char-sel-pill${ci>=0?' sel-'+ci:''}${!hasData?' no-data':''}" onclick="${clickAttr}">${c.name}</div>`;
         }).join('')}</div>
         ${compareSelIds.length ? `
         <div class="compare-controls">
@@ -493,7 +396,7 @@ function renderCompare() {
                 <option value="弱" ${fh==='弱'?'selected':''}>弱</option>
             </select>
         </div>
-        ${cmpSortKey ? `<div class="compare-info">「${cmpSortKey}」で${cmpSortAsc?'昇順':'降順'}ソート中 — ${rows.length}件</div>` : ''}
+        ${cmpSortKey?`<div class="compare-info">「${cmpSortKey}」で${cmpSortAsc?'昇順':'降順'}ソート中 — ${rows.length}件</div>`:''}
         <div class="tbl-wrap"><table>
             <thead><tr>
                 <th>キャラ</th>
@@ -505,10 +408,10 @@ function renderCompare() {
                 <th>備考</th>
             </tr></thead>
             <tbody>
-            ${rows.length ? rows.map(r => {
-                const ci = compareSelIds.indexOf(r.charId);
-                const barCol = BAR_COLS[ci] || BAR_COLS[0];
-                const isBest = r.dmg === mxDmg && mxDmg > 0;
+            ${rows.length?rows.map(r=>{
+                const ci=compareSelIds.indexOf(r.charId);
+                const barCol=BAR_COLS[ci]||BAR_COLS[0];
+                const isBest=r.dmg===mxDmg&&mxDmg>0;
                 return `<tr class="${isBest?'best-row':''}">
                     <td><span class="compare-char-tag ${CCT[ci]||CCT[0]}">${r.charName}</span></td>
                     <td style="font-weight:600">${r.name}</td>
@@ -518,29 +421,16 @@ function renderCompare() {
                     <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(r.dmg/mx*100)}%;background:${barCol}"></div></div><span class="dmg-val">${r.dmg}</span></div></td>
                     <td style="font-size:12px;color:var(--text-sub)">${r.note||''}</td>
                 </tr>`;
-            }).join('') : '<tr><td colspan="7" class="empty">条件に一致する技がありません</td></tr>'}
+            }).join(''):'<tr><td colspan="7" class="empty">条件に一致する技がありません</td></tr>'}
             </tbody>
         </table></div>` : '<div class="empty">上からキャラクターを選んでください（最大4体）</div>'}`;
 }
+function toggleCmpChar(id) { const idx=compareSelIds.indexOf(id); if(idx>=0) compareSelIds.splice(idx,1); else if(compareSelIds.length<4) compareSelIds.push(id); renderCompare(); }
+function doCmpSort(key) { if(cmpSortKey===key) cmpSortAsc=!cmpSortAsc; else{cmpSortKey=key;cmpSortAsc=true;} renderCompare(); }
 
-function toggleCmpChar(id) {
-    const idx = compareSelIds.indexOf(id);
-    if (idx >= 0) compareSelIds.splice(idx, 1);
-    else if (compareSelIds.length < 4) compareSelIds.push(id);
-    renderCompare();
-}
-
-function doCmpSort(key) {
-    if (cmpSortKey === key) cmpSortAsc = !cmpSortAsc;
-    else { cmpSortKey = key; cmpSortAsc = true; }
-    renderCompare();
-}
-
-// ---- 初期化 ----
 window.onload = function() {
     setTheme(localStorage.getItem(THEME_KEY) || 'dark');
-    renderCharList();
-    renderActiveTab();
+    renderCharList(); renderActiveTab();
 };
 </script>
 </body>

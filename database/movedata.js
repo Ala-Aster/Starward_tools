@@ -7,7 +7,10 @@
 const MOVE_DATA = [
   // 例:
   // {
-  //   id: "3.0_c001",        // characters.js の cost + '_' + id と対応
+  //   id: "3.0_c001",
+  //   status: {
+  //     hp: 620, boostCount: 3, boostDist: 70, lockDist: 200
+  //   },
   //   moves: [
   //     { name: "格闘", input: "格闘", startup: 6, hitbox: "普通", dmg: 1200, note: "" }
   //   ],
