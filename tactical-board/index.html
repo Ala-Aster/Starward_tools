@@ -12,23 +12,25 @@
             <div class="header-top">
                 <a class="back-link" href="../">← トップへ戻る</a>
                 <div class="header-actions">
-                    <button id="undoBtn" class="btn btn-action" title="元に戻す (Ctrl+Z)">↩ Undo</button>
-                    <button id="resetBtn" class="btn btn-action btn-danger">🗑 リセット</button>
+                    <button id="undoBtn"    class="btn btn-action" title="元に戻す (Ctrl+Z)">↩ Undo</button>
+                    <button id="resetBtn"   class="btn btn-action btn-danger">🗑 リセット</button>
                     <button id="saveImgBtn" class="btn btn-action btn-save">💾 画像保存</button>
                 </div>
             </div>
             <h1>戦術ボード</h1>
-            <p class="subtitle">グリッド上に戦術を描画</p>
+            <p class="subtitle">† UndoはCtrl+Z †</p>
         </header>
 
         <div class="control-panel">
-            <div class="mode-section">
+
+            <div class="section">
                 <h3>描画モード</h3>
                 <button id="freeDrawBtn" class="btn btn-mode active">自由描画</button>
                 <button id="eraserBtn"   class="btn btn-mode">消しゴム</button>
+                <button id="moveBtn"     class="btn btn-mode">コマ移動</button>
             </div>
 
-            <div class="color-section">
+            <div class="section">
                 <h3>ペンの色</h3>
                 <div class="color-buttons">
                     <button class="btn btn-color color-black active" data-color="#2c2c2c" title="黒"></button>
@@ -38,13 +40,40 @@
                 </div>
             </div>
 
-            <div class="pieces-section">
+            <!-- コマ配置：A〜D × 4形 -->
+            <div class="section">
                 <h3>コマを配置</h3>
-                <div class="piece-buttons">
-                    <button id="pieceA" class="btn btn-piece piece-a">A</button>
-                    <button id="pieceB" class="btn btn-piece piece-b">B</button>
-                    <button id="pieceC" class="btn btn-piece piece-c">C</button>
-                    <button id="pieceD" class="btn btn-piece piece-d">D</button>
+                <div class="piece-grid">
+                    <!-- ヘッダー行 -->
+                    <div class="piece-grid-spacer"></div>
+                    <div class="piece-grid-shape-label">●</div>
+                    <div class="piece-grid-shape-label">■</div>
+                    <div class="piece-grid-shape-label">▲</div>
+                    <div class="piece-grid-shape-label">★</div>
+                    <!-- A行 -->
+                    <div class="piece-grid-type-label piece-a-label">A</div>
+                    <button class="btn btn-piece-cell piece-a" data-type="A" data-shape="circle"></button>
+                    <button class="btn btn-piece-cell piece-a" data-type="A" data-shape="square"></button>
+                    <button class="btn btn-piece-cell piece-a" data-type="A" data-shape="triangle"></button>
+                    <button class="btn btn-piece-cell piece-a" data-type="A" data-shape="star"></button>
+                    <!-- B行 -->
+                    <div class="piece-grid-type-label piece-b-label">B</div>
+                    <button class="btn btn-piece-cell piece-b" data-type="B" data-shape="circle"></button>
+                    <button class="btn btn-piece-cell piece-b" data-type="B" data-shape="square"></button>
+                    <button class="btn btn-piece-cell piece-b" data-type="B" data-shape="triangle"></button>
+                    <button class="btn btn-piece-cell piece-b" data-type="B" data-shape="star"></button>
+                    <!-- C行 -->
+                    <div class="piece-grid-type-label piece-c-label">C</div>
+                    <button class="btn btn-piece-cell piece-c" data-type="C" data-shape="circle"></button>
+                    <button class="btn btn-piece-cell piece-c" data-type="C" data-shape="square"></button>
+                    <button class="btn btn-piece-cell piece-c" data-type="C" data-shape="triangle"></button>
+                    <button class="btn btn-piece-cell piece-c" data-type="C" data-shape="star"></button>
+                    <!-- D行 -->
+                    <div class="piece-grid-type-label piece-d-label">D</div>
+                    <button class="btn btn-piece-cell piece-d" data-type="D" data-shape="circle"></button>
+                    <button class="btn btn-piece-cell piece-d" data-type="D" data-shape="square"></button>
+                    <button class="btn btn-piece-cell piece-d" data-type="D" data-shape="triangle"></button>
+                    <button class="btn btn-piece-cell piece-d" data-type="D" data-shape="star"></button>
                 </div>
             </div>
 

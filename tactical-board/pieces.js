@@ -2,155 +2,122 @@
 class Pieces {
     constructor(grid) {
         this.grid = grid;
-        this.pieces = []; // { type: 'A'|'B'|'C'|'D', x, y }
+        this.pieces = []; // { type, shape, x, y }
         this.colors = {
             'A': '#ff6b6b',
             'B': '#4ecdc4',
             'C': '#f9ca24',
             'D': '#6c5ce7'
         };
-        this.selectedType = null;
+        this.textColors = {
+            'A': '#ffffff',
+            'B': '#ffffff',
+            'C': '#333333',
+            'D': '#ffffff'
+        };
         this.draggedPiece = null;
-        this.pieceRadius = 20;
+        this.pieceRadius = 22;
     }
 
-    /**
-     * コマを配置（新規）- ピクセル座標で配置
-     */
-    addPiece(x, y, type) {
-        const piece = { type, x, y };
+    addPiece(x, y, type, shape = 'circle') {
+        const piece = { type, shape, x, y };
         this.pieces.push(piece);
         return piece;
     }
 
-    /**
-     * 指定位置に最も近いコマを取得（距離判定）
-     */
     getPieceAt(x, y, threshold = this.pieceRadius * 1.5) {
         let closest = null;
         let closestDist = threshold;
-
         for (const piece of this.pieces) {
-            const dist = Math.sqrt(Math.pow(piece.x - x, 2) + Math.pow(piece.y - y, 2));
-            if (dist < closestDist) {
-                closestDist = dist;
-                closest = piece;
-            }
+            const dist = Math.hypot(piece.x - x, piece.y - y);
+            if (dist < closestDist) { closestDist = dist; closest = piece; }
         }
-
         return closest;
     }
 
-    /**
-     * コマを削除
-     */
-    removePiece(piece) {
-        const index = this.pieces.indexOf(piece);
-        if (index > -1) {
-            this.pieces.splice(index, 1);
-        }
-    }
-
-    /**
-     * マウス座標を実座標に変換して取得
-     */
     getPieceAtPixel(x, y) {
         const rect = this.grid.canvas.getBoundingClientRect();
-        const canvasX = x - rect.left;
-        const canvasY = y - rect.top;
-        return this.getPieceAt(canvasX, canvasY);
+        return this.getPieceAt(x - rect.left, y - rect.top);
     }
 
-    /**
-     * コマを描画
-     */
+    removePiece(piece) {
+        const i = this.pieces.indexOf(piece);
+        if (i > -1) this.pieces.splice(i, 1);
+    }
+
     draw(ctx) {
-        for (const piece of this.pieces) {
-            this.drawPiece(ctx, piece);
-        }
+        for (const piece of this.pieces) this._drawPiece(ctx, piece);
     }
 
-    /**
-     * 単一のコマを描画
-     */
-    drawPiece(ctx, piece) {
-        const radius = this.pieceRadius;
+    _drawPiece(ctx, piece) {
+        const { x, y, type, shape } = piece;
+        const r = this.pieceRadius;
+        const color = this.colors[type];
+        const textColor = this.textColors[type];
 
-        // コマの円
-        ctx.fillStyle = this.colors[piece.type];
-        ctx.beginPath();
-        ctx.arc(piece.x, piece.y, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // コマの枠線
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillStyle = color;
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
         ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        switch (shape) {
+            case 'circle':
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                break;
+            case 'square':
+                ctx.roundRect(x - r, y - r, r * 2, r * 2, 4);
+                break;
+            case 'triangle':
+                ctx.moveTo(x, y - r);
+                ctx.lineTo(x + r * 0.87, y + r * 0.5);
+                ctx.lineTo(x - r * 0.87, y + r * 0.5);
+                ctx.closePath();
+                break;
+            case 'star':
+                this._starPath(ctx, x, y, r, r * 0.45, 5);
+                break;
+        }
+        ctx.fill();
         ctx.stroke();
 
-        // ラベル（コマの種類）
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 16px sans-serif';
+        ctx.fillStyle = textColor;
+        ctx.font = 'bold 15px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(piece.type, piece.x, piece.y);
+        // 三角は重心が少し下なので文字を少し下げる
+        const textY = shape === 'triangle' ? y + r * 0.15 : y;
+        ctx.fillText(type, x, textY);
     }
 
-    /**
-     * ドラッグ開始
-     */
+    _starPath(ctx, cx, cy, outerR, innerR, points) {
+        const step = Math.PI / points;
+        ctx.moveTo(cx, cy - outerR);
+        for (let i = 1; i < points * 2; i++) {
+            const r = i % 2 === 0 ? outerR : innerR;
+            const angle = i * step - Math.PI / 2;
+            ctx.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+        }
+        ctx.closePath();
+    }
+
     startDrag(x, y) {
-        this.draggedPiece = this.getPieceAtPixel(x, y);
+        const rect = this.grid.canvas.getBoundingClientRect();
+        this.draggedPiece = this.getPieceAt(x - rect.left, y - rect.top);
         return this.draggedPiece !== null;
     }
 
-    /**
-     * ドラッグ中のコマを移動
-     */
     dragPiece(x, y) {
         if (!this.draggedPiece) return;
-
         const rect = this.grid.canvas.getBoundingClientRect();
-        const canvasX = x - rect.left;
-        const canvasY = y - rect.top;
-
-        // グリッド範囲内のみ移動を許可
-        if (canvasX >= 0 && canvasX < this.grid.width &&
-            canvasY >= 0 && canvasY < this.grid.height) {
-            this.draggedPiece.x = canvasX;
-            this.draggedPiece.y = canvasY;
+        const cx = x - rect.left;
+        const cy = y - rect.top;
+        if (cx >= 0 && cx < this.grid.width && cy >= 0 && cy < this.grid.height) {
+            this.draggedPiece.x = cx;
+            this.draggedPiece.y = cy;
         }
     }
 
-    /**
-     * ドラッグ終了
-     */
-    endDrag() {
-        this.draggedPiece = null;
-    }
+    endDrag() { this.draggedPiece = null; }
 
-    /**
-     * すべてのコマをクリア
-     */
-    clear() {
-        this.pieces = [];
-    }
-
-    /**
-     * コマをJSON形式で取得
-     */
-    toJSON() {
-        return JSON.stringify(this.pieces);
-    }
-
-    /**
-     * JSONからコマを復元
-     */
-    fromJSON(json) {
-        try {
-            this.pieces = JSON.parse(json);
-        } catch (e) {
-            console.error('Failed to parse pieces JSON:', e);
-            this.pieces = [];
-        }
-    }
+    clear() { this.pieces = []; }
 }

@@ -1,24 +1,45 @@
-// main.js - メインアプリケーションロジック
+// main.js
 let canvas, grid, pieces, arrows;
 let mode = 'freeDraw';
 let selectedPieceType = null;
+let selectedShape = null;
 
+// ---- Undoスタック（描画＋コマを一緒に管理）----
+const undoStack = [];
+const MAX_UNDO = 50;
+
+function saveSnapshot() {
+    undoStack.push({
+        strokes: arrows.getState(),
+        pieces:  JSON.stringify(pieces.pieces)
+    });
+    if (undoStack.length > MAX_UNDO) undoStack.shift();
+}
+
+function doUndo() {
+    if (undoStack.length === 0) { showStatus('これ以上戻せません'); return; }
+    const snap = undoStack.pop();
+    arrows.setState(snap.strokes);
+    pieces.pieces = JSON.parse(snap.pieces);
+    render();
+    showStatus('元に戻しました');
+}
+
+// ---- 初期化 ----
 function init() {
     canvas = document.getElementById('boardCanvas');
     grid   = new Grid(canvas, 60);
     pieces = new Pieces(grid);
     arrows = new Arrows(grid, canvas);
-
     setupEventListeners();
     render();
 }
 
 function setupEventListeners() {
-    // モードボタン
     document.getElementById('freeDrawBtn').addEventListener('click', () => setMode('freeDraw'));
     document.getElementById('eraserBtn').addEventListener('click',   () => setMode('eraser'));
+    document.getElementById('moveBtn').addEventListener('click',     () => setMode('move'));
 
-    // 色ボタン
     document.querySelectorAll('.btn-color').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.btn-color').forEach(b => b.classList.remove('active'));
@@ -29,56 +50,64 @@ function setupEventListeners() {
         });
     });
 
-    // コマボタン
-    document.getElementById('pieceA').addEventListener('click', () => setPieceType('A'));
-    document.getElementById('pieceB').addEventListener('click', () => setPieceType('B'));
-    document.getElementById('pieceC').addEventListener('click', () => setPieceType('C'));
-    document.getElementById('pieceD').addEventListener('click', () => setPieceType('D'));
+    document.querySelectorAll('.btn-piece-cell').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const type  = btn.dataset.type;
+            const shape = btn.dataset.shape;
+            if (selectedPieceType === type && selectedShape === shape) {
+                clearPieceSelection();
+                setMode('freeDraw');
+                return;
+            }
+            selectPieceCell(type, shape, btn);
+        });
+    });
 
-    // Undo ボタン
     document.getElementById('undoBtn').addEventListener('click', doUndo);
-
-    // リセットボタン
     document.getElementById('resetBtn').addEventListener('click', () => {
         if (!confirm('ボードをすべてリセットしますか？')) return;
+        saveSnapshot();
         arrows.clear();
         pieces.clear();
         render();
         showStatus('リセットしました');
     });
-
-    // 画像保存ボタン
     document.getElementById('saveImgBtn').addEventListener('click', saveImage);
 
-    // キャンバスイベント
-    canvas.addEventListener('mousedown',   onCanvasMouseDown);
-    canvas.addEventListener('mousemove',   onCanvasMouseMove);
-    canvas.addEventListener('mouseup',     onCanvasMouseUp);
-    canvas.addEventListener('mouseleave',  onCanvasMouseLeave);
-    canvas.addEventListener('contextmenu', onCanvasContextMenu);
+    canvas.addEventListener('mousedown',   onMouseDown);
+    canvas.addEventListener('mousemove',   onMouseMove);
+    canvas.addEventListener('mouseup',     onMouseUp);
+    canvas.addEventListener('mouseleave',  onMouseLeave);
+    canvas.addEventListener('contextmenu', onContextMenu);
 
-    // Ctrl+Z / Cmd+Z
     document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-            e.preventDefault();
-            doUndo();
-        }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); doUndo(); }
     });
 }
 
-function doUndo() {
-    if (arrows.undo()) {
-        render();
-        showStatus('元に戻しました');
-    } else {
-        showStatus('これ以上戻せません');
-    }
+// ---- モード・コマ選択 ----
+function selectPieceCell(type, shape, btn) {
+    clearPieceSelection();
+    selectedPieceType = type;
+    selectedShape = shape;
+    mode = 'piece';
+    document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active-piece');
+    canvas.style.cursor = 'cell';
+    const shapeNames = { circle:'丸', square:'四角', triangle:'三角', star:'星' };
+    showStatus(`${type}・${shapeNames[shape]}を配置（右クリックで削除）`);
+}
+
+function clearPieceSelection() {
+    selectedPieceType = null;
+    selectedShape = null;
+    document.querySelectorAll('.btn-piece-cell').forEach(b => b.classList.remove('active-piece'));
 }
 
 function setMode(newMode) {
     mode = newMode;
-    selectedPieceType = null;
-    document.querySelectorAll('.btn-mode').forEach(btn => btn.classList.remove('active'));
+    if (newMode !== 'piece') clearPieceSelection();
+    document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
     if (newMode === 'freeDraw') {
         document.getElementById('freeDrawBtn').classList.add('active');
         canvas.style.cursor = 'crosshair';
@@ -87,75 +116,69 @@ function setMode(newMode) {
         document.getElementById('eraserBtn').classList.add('active');
         canvas.style.cursor = 'cell';
         showStatus('消しゴムモード');
+    } else if (newMode === 'move') {
+        document.getElementById('moveBtn').classList.add('active');
+        canvas.style.cursor = 'grab';
+        showStatus('コマ移動モード — コマをドラッグして移動');
     }
 }
 
-function setPieceType(type) {
-    if (selectedPieceType === type) {
-        selectedPieceType = null;
-        setMode('freeDraw');
-        return;
-    }
-    selectedPieceType = type;
-    mode = 'piece';
-    document.querySelectorAll('.btn-mode').forEach(btn => btn.classList.remove('active'));
-    canvas.style.cursor = 'cell';
-    showStatus(`コマ「${type}」を配置します（クリックで配置、右クリックで削除）`);
-}
-
-// 消しゴムモード時の共通処理：線の消去＋コマの削除
+// ---- キャンバスイベント ----
 function applyEraser(clientX, clientY) {
     arrows.erase(clientX, clientY);
     const piece = pieces.getPieceAtPixel(clientX, clientY);
     if (piece) pieces.removePiece(piece);
 }
 
-function onCanvasMouseDown(e) {
+function onMouseDown(e) {
     if (!grid.isInsideGrid(e.clientX, e.clientY)) return;
     if (mode === 'freeDraw') {
+        saveSnapshot();
         arrows.startStroke(e.clientX, e.clientY);
     } else if (mode === 'eraser') {
+        saveSnapshot();
         applyEraser(e.clientX, e.clientY);
-    } else if (mode === 'piece' && selectedPieceType) {
+    } else if (mode === 'piece' && selectedPieceType && selectedShape) {
+        saveSnapshot();
         const rect = canvas.getBoundingClientRect();
-        pieces.addPiece(e.clientX - rect.left, e.clientY - rect.top, selectedPieceType);
-    } else {
-        pieces.startDrag(e.clientX, e.clientY);
+        pieces.addPiece(e.clientX - rect.left, e.clientY - rect.top, selectedPieceType, selectedShape);
+    } else if (mode === 'move') {
+        if (pieces.startDrag(e.clientX, e.clientY)) {
+            saveSnapshot();
+            canvas.style.cursor = 'grabbing';
+        }
     }
     render();
 }
 
-function onCanvasMouseMove(e) {
+function onMouseMove(e) {
     if (!grid.isInsideGrid(e.clientX, e.clientY)) return;
     if (mode === 'freeDraw' && arrows.strokeInProgress) {
-        arrows.addPointToStroke(e.clientX, e.clientY);
-        render();
+        arrows.addPointToStroke(e.clientX, e.clientY); render();
     } else if (mode === 'eraser' && e.buttons === 1) {
-        applyEraser(e.clientX, e.clientY);
-        render();
-    } else if (pieces.draggedPiece) {
-        pieces.dragPiece(e.clientX, e.clientY);
-        render();
+        applyEraser(e.clientX, e.clientY); render();
+    } else if (mode === 'move' && pieces.draggedPiece) {
+        pieces.dragPiece(e.clientX, e.clientY); render();
     }
 }
 
-function onCanvasMouseUp(e) {
+function onMouseUp(e) {
     if (mode === 'freeDraw') arrows.endStroke();
-    else if (pieces.draggedPiece) pieces.endDrag();
+    if (mode === 'move' && pieces.draggedPiece) { pieces.endDrag(); canvas.style.cursor = 'grab'; }
     render();
 }
 
-function onCanvasMouseLeave(e) {
+function onMouseLeave(e) {
     if (mode === 'freeDraw' && arrows.strokeInProgress) arrows.endStroke();
-    if (pieces.draggedPiece) pieces.endDrag();
+    if (pieces.draggedPiece) { pieces.endDrag(); canvas.style.cursor = 'grab'; }
     render();
 }
 
-// 右クリック：通常モードでもコマ削除できるよう残す
-function onCanvasContextMenu(e) {
+function onContextMenu(e) {
     e.preventDefault();
     const piece = pieces.getPieceAtPixel(e.clientX, e.clientY);
     if (piece) {
+        saveSnapshot();
         pieces.removePiece(piece);
         showStatus('コマを削除しました');
         render();
@@ -164,31 +187,27 @@ function onCanvasContextMenu(e) {
 
 // ---- 画像保存 ----
 function saveImage() {
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width  = canvas.width;
-    tempCanvas.height = canvas.height;
-    const ctx = tempCanvas.getContext('2d');
+    const tmp = document.createElement('canvas');
+    tmp.width = canvas.width; tmp.height = canvas.height;
+    const ctx = tmp.getContext('2d');
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    ctx.fillRect(0, 0, tmp.width, tmp.height);
     ctx.drawImage(canvas, 0, 0);
     const a = document.createElement('a');
-    a.href     = tempCanvas.toDataURL('image/png');
+    a.href = tmp.toDataURL('image/png');
     a.download = 'tactical-board.png';
     a.click();
     showStatus('画像を保存しました', 'success');
 }
 
-// ---- ステータス表示 ----
-let _statusTimer = null;
-function showStatus(message, type = 'info') {
+// ---- ステータス ----
+let _st = null;
+function showStatus(msg, type = 'info') {
     const el = document.getElementById('statusMsg');
-    el.textContent = message;
+    el.textContent = msg;
     el.className = 'status-msg ' + type;
-    clearTimeout(_statusTimer);
-    _statusTimer = setTimeout(() => {
-        el.textContent = '';
-        el.className = 'status-msg';
-    }, 2500);
+    clearTimeout(_st);
+    _st = setTimeout(() => { el.textContent = ''; el.className = 'status-msg'; }, 2500);
 }
 
 // ---- 描画 ----
