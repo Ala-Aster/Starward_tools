@@ -73,9 +73,14 @@
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: var(--section-bg); }
         .badge-f { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: rgba(255,100,50,0.15); color: #ff8060; font-family: var(--font-mono); }
-        .hb-strong { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(0,200,120,0.15); color: #00c878; }
-        .hb-normal { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--section-bg); color: var(--text-sub); }
-        .hb-weak   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(255,80,80,0.12); color: #ff6060; }
+        .hb-strong   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-normal   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-weak     { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-special  { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-beam     { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-bullet   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-sbullet  { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-funnel   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
         .mono { font-family: var(--font-mono); font-size: 12px; background: var(--section-bg); padding: 2px 6px; border-radius: 4px; color: var(--text-sub); }
         .bar-wrap { display: flex; align-items: center; gap: 6px; }
         .bar-bg { flex: 1; height: 5px; background: var(--section-bg); border-radius: 3px; overflow: hidden; min-width: 40px; }
@@ -135,7 +140,7 @@
 </div>
 
 <div class="no-data-bar" id="no-data-bar">
-    ⚠️ movedata.js が見つかりません。edit.html でデータを入力してエクスポートし、database/ フォルダに追加してください。
+    ⚠️ movedata_*.js が見つかりません。edit.html でデータを入力してエクスポートし、database/ フォルダに追加してください。
 </div>
 
 <div class="layout">
@@ -171,20 +176,37 @@
 </div>
 
 <script src="../characters.js"></script>
-<script src="movedata.js" onerror="onMoveDataMissing()"></script>
+<script src="movedata_3.0.js" onerror="onMoveDataError('3.0')"></script>
+<script src="movedata_2.5.js" onerror="onMoveDataError('2.5')"></script>
+<script src="movedata_2.0.js" onerror="onMoveDataError('2.0')"></script>
+<script src="movedata_1.5.js" onerror="onMoveDataError('1.5')"></script>
 <script>
 const THEME_KEY  = 'starward_theme';
-const HB_ORDER   = { 強:0, 普通:1, 弱:2 };
+const HB_ORDER   = { 強:0, 普通:1, 弱:2, 特殊:3, ビーム:4, 実弾:5, 強実弾:6, ファンネル:7 };
+const HB_CLASS   = { 強:'hb-strong', 普通:'hb-normal', 弱:'hb-weak', 特殊:'hb-special', ビーム:'hb-beam', 実弾:'hb-bullet', 強実弾:'hb-sbullet', ファンネル:'hb-funnel' };
+function hbClass(v) { return HB_CLASS[v] || 'hb-normal'; }
 const BAR_COLS   = ['#a090ff','#00c878','#ff8060','#60c0ff'];
 const CCT        = ['cct0','cct1','cct2','cct3'];
 const IMAGE_BASE = 'https://raw.githubusercontent.com/Ala-Aster/Starward_tools/main/image';
 const DEFAULT_STATUS = { hp: 0, boostCount: 0, boostDist: 0, lockDist: 0 };
 
-function onMoveDataMissing() { document.getElementById('no-data-bar').classList.add('show'); }
+const _missingCosts = [];
+function onMoveDataError(cost) { _missingCosts.push(cost); if (_missingCosts.length === 4) document.getElementById('no-data-bar').classList.add('show'); }
+
+// 4つのコスト別変数をマージしてひとつの配列に
+function getMoveDataArray() {
+    const all = [];
+    if (typeof MOVE_DATA_3_0 !== 'undefined') all.push(...MOVE_DATA_3_0);
+    if (typeof MOVE_DATA_2_5 !== 'undefined') all.push(...MOVE_DATA_2_5);
+    if (typeof MOVE_DATA_2_0 !== 'undefined') all.push(...MOVE_DATA_2_0);
+    if (typeof MOVE_DATA_1_5 !== 'undefined') all.push(...MOVE_DATA_1_5);
+    return all;
+}
 
 let chars = CHARACTER_DATA.map(c => {
     const key = c.cost + '_' + c.id;
-    const md = (typeof MOVE_DATA !== 'undefined') ? MOVE_DATA.find(d => d.id === key) : null;
+    const allMoveData = getMoveDataArray();
+    const md = allMoveData.find(d => d.id === key);
     return {
         id: key, name: c.name, cost: c.cost,
         status: { ...DEFAULT_STATUS, ...(md?.status||{}) },
@@ -319,7 +341,7 @@ function renderMoves() {
                 <td style="font-weight:600">${m.name}</td>
                 <td><span class="mono">${m.input}</span></td>
                 <td><span class="badge-f">${m.startup}F</span></td>
-                <td><span class="${m.hitbox==='強'?'hb-strong':m.hitbox==='弱'?'hb-weak':'hb-normal'}">${m.hitbox}</span></td>
+                <td><span class="${hbClass(m.hitbox)}">${m.hitbox}</span></td>
                 <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(m.dmg/mx*100)}%"></div></div><span class="dmg-val">${m.dmg}</span></div></td>
                 <td style="font-size:12px;color:var(--text-sub)">${m.note||''}</td>
             </tr>`).join('') : '<tr><td colspan="6" class="empty">データが登録されていません</td></tr>'}
@@ -394,6 +416,11 @@ function renderCompare() {
                 <option value="強" ${fh==='強'?'selected':''}>強</option>
                 <option value="普通" ${fh==='普通'?'selected':''}>普通</option>
                 <option value="弱" ${fh==='弱'?'selected':''}>弱</option>
+                <option value="特殊" ${fh==='特殊'?'selected':''}>特殊</option>
+                <option value="ビーム" ${fh==='ビーム'?'selected':''}>ビーム</option>
+                <option value="実弾" ${fh==='実弾'?'selected':''}>実弾</option>
+                <option value="強実弾" ${fh==='強実弾'?'selected':''}>強実弾</option>
+                <option value="ファンネル" ${fh==='ファンネル'?'selected':''}>ファンネル</option>
             </select>
         </div>
         ${cmpSortKey?`<div class="compare-info">「${cmpSortKey}」で${cmpSortAsc?'昇順':'降順'}ソート中 — ${rows.length}件</div>`:''}
@@ -417,7 +444,7 @@ function renderCompare() {
                     <td style="font-weight:600">${r.name}</td>
                     <td><span class="mono">${r.input}</span></td>
                     <td><span class="badge-f">${r.startup}F</span></td>
-                    <td><span class="${r.hitbox==='強'?'hb-strong':r.hitbox==='弱'?'hb-weak':'hb-normal'}">${r.hitbox}</span></td>
+                    <td><span class="${hbClass(r.hitbox)}">${r.hitbox}</span></td>
                     <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(r.dmg/mx*100)}%;background:${barCol}"></div></div><span class="dmg-val">${r.dmg}</span></div></td>
                     <td style="font-size:12px;color:var(--text-sub)">${r.note||''}</td>
                 </tr>`;

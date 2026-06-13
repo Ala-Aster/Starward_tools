@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星之翼 技データベース［編集］</title>
+    <title>星之翼 技チE�Eタベ�Eス�E�編雁E��</title>
     <style>
         :root {
             --bg-color: #121212; --container-bg: #1e1e1e; --section-bg: #252525;
@@ -92,9 +92,15 @@
         tr.editing td { background: var(--edit-bg) !important; }
         tr.editing td input, tr.editing td select { width: 100%; padding: 3px 6px; font-size: 12px; background: var(--list-bg); color: var(--text-main); border: 1px solid var(--accent-color); border-radius: 4px; font-family: var(--font-sans); }
         .badge-f { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: rgba(255,100,50,0.15); color: #ff8060; font-family: var(--font-mono); }
-        .hb-strong { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(0,200,120,0.15); color: #00c878; }
-        .hb-normal { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--section-bg); color: var(--text-sub); }
-        .hb-weak   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(255,80,80,0.12); color: #ff6060; }
+        .hb-strong   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-normal   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-weak     { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-special  { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-beam     { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-bullet   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-sbullet  { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-funnel   { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(100,140,255,0.15); color: #7090ff; }
+        .hb-shine    { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: rgba(255,180,50,0.2); color: #ffb820; }
         .mono { font-family: var(--font-mono); font-size: 12px; background: var(--section-bg); padding: 2px 6px; border-radius: 4px; color: var(--text-sub); }
         .bar-wrap { display: flex; align-items: center; gap: 6px; }
         .bar-bg { flex: 1; height: 5px; background: var(--section-bg); border-radius: 3px; overflow: hidden; min-width: 40px; }
@@ -105,6 +111,10 @@
         .btn-icon.del:hover { color: var(--danger-text); }
         .btn-icon.confirm { color: var(--accent-color); font-size: 15px; }
         .btn-icon.cancel  { color: var(--text-sub); }
+        .drag-handle { cursor: grab; color: var(--border-color); font-size: 14px; padding: 2px 4px; user-select: none; }
+        .drag-handle:hover { color: var(--text-sub); }
+        tr.dragging td { opacity: 0.4; background: var(--edit-bg) !important; }
+        tr.drag-over td { border-top: 2px solid var(--accent-color); }
         .add-row { display: grid; grid-template-columns: 1.4fr 1fr .7fr .7fr .7fr 1fr auto; gap: 6px; align-items: center; padding-top: 10px; border-top: 1px solid var(--border-color); }
         .add-row input, .add-row select { padding: 5px 8px; font-size: 12px; background: var(--list-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; font-family: var(--font-sans); }
         .btn-sm { padding: 5px 10px; font-size: 12px; font-weight: 600; background: var(--accent-color); color: var(--btn-text); border: none; border-radius: 6px; cursor: pointer; white-space: nowrap; font-family: var(--font-sans); }
@@ -122,7 +132,7 @@
         .empty { text-align: center; padding: 2rem; color: var(--text-sub); font-size: 14px; }
         .no-select { text-align: center; padding: 3rem; color: var(--text-sub); font-size: 14px; }
 
-        /* ステータスパネル */
+        /* スチE�Eタスパネル */
         .status-panel { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
         .status-img-wrap { flex-shrink: 0; }
         .status-img {
@@ -146,8 +156,19 @@
         .modal { background: var(--container-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; width: 90%; max-width: 500px; }
         .modal h3 { font-size: 16px; margin-bottom: 8px; color: var(--accent-color); }
         .modal p { font-size: 12px; color: var(--text-sub); margin-bottom: 12px; }
-        .modal textarea { width: 100%; height: 180px; padding: 8px; background: var(--list-bg); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 6px; font-family: var(--font-mono); font-size: 11px; resize: vertical; margin-bottom: 10px; }
         .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+        .drop-zone {
+            border: 2px dashed var(--border-color); border-radius: 10px;
+            padding: 32px 16px; text-align: center; cursor: pointer;
+            transition: border-color 0.2s, background 0.2s; margin-bottom: 12px;
+        }
+        .drop-zone:hover, .drop-zone.dragover { border-color: var(--accent-color); background: var(--accent-bg); }
+        .drop-zone-icon { font-size: 28px; margin-bottom: 8px; }
+        .drop-zone-text { font-size: 13px; color: var(--text-sub); }
+        .drop-zone-text strong { color: var(--accent-color); }
+        .drop-zone.loaded { border-color: #00c878; background: rgba(0,200,120,0.05); }
+        .drop-zone.loaded .drop-zone-icon::after { content: ' ✁E; font-size: 20px; color: #00c878; }
+        .drop-zone.loaded .drop-zone-text { color: #00c878; }
         .btn-cancel { padding: 6px 14px; font-size: 13px; background: none; color: var(--text-sub); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-family: var(--font-sans); }
         .save-indicator { font-size: 11px; color: var(--text-sub); transition: color 0.3s; }
         .save-indicator.saved { color: #00c878; }
@@ -163,15 +184,15 @@
 
 <div class="top-bar">
     <div class="top-bar-left">
-        <a class="back-link" href="../">← トップへ戻る</a>
-        <span class="page-title">技データベース</span>
+        <a class="back-link" href="../">ↁEトップへ戻めE/a>
+        <span class="page-title">技チE�Eタベ�Eス</span>
         <span class="edit-badge">EDIT</span>
     </div>
     <div class="top-bar-right">
-        <span class="save-indicator" id="save-indicator">●  自動保存</span>
+        <span class="save-indicator" id="save-indicator">◁E 自動保孁E/span>
         <div class="theme-switcher">
             <button class="btn-theme" onclick="setTheme('dark')"   id="t-dark">ダーク</button>
-            <button class="btn-theme" onclick="setTheme('light')"  id="t-light">ライト</button>
+            <button class="btn-theme" onclick="setTheme('light')"  id="t-light">ライチE/button>
             <button class="btn-theme" onclick="setTheme('custom')" id="t-custom">クリーム</button>
         </div>
     </div>
@@ -179,11 +200,15 @@
 
 <div class="export-bar">
     <div class="export-bar-text">
-        <strong>📤 エクスポート</strong>　編集が終わったら movedata.js をダウンロードして database/ フォルダに追加してください
+        <strong>📤 エクスポ�EチE/strong>　コスト別に movedata_*.js をダウンロードして database/ フォルダに追加してください
     </div>
     <div class="export-bar-actions">
-        <button class="btn-import" onclick="openImportModal()">📥 インポート</button>
-        <button class="btn-export" onclick="exportJS()">movedata.js をダウンロード</button>
+        <button class="btn-import" onclick="openImportModal()">📥 インポ�EチE/button>
+        <button class="btn-export" onclick="exportJS('3.0')">3.0</button>
+        <button class="btn-export" onclick="exportJS('2.5')">2.5</button>
+        <button class="btn-export" onclick="exportJS('2.0')">2.0</button>
+        <button class="btn-export" onclick="exportJS('1.5')">1.5</button>
+        <button class="btn-export" onclick="exportAllJS()" style="background:var(--accent-color);color:var(--btn-text)">全て</button>
     </div>
 </div>
 
@@ -205,9 +230,9 @@
 
     <div class="main-panel">
         <div class="tab-bar">
-            <button class="tab active" id="tab-status" onclick="switchTab('status')">ステータス</button>
+            <button class="tab active" id="tab-status" onclick="switchTab('status')">スチE�Eタス</button>
             <button class="tab"        id="tab-moves"  onclick="switchTab('moves')">技一覧</button>
-            <button class="tab"        id="tab-combos" onclick="switchTab('combos')">コンボ</button>
+            <button class="tab"        id="tab-combos" onclick="switchTab('combos')">コンチE/button>
             <button class="tab"        id="tab-memo"   onclick="switchTab('memo')">メモ</button>
         </div>
         <div id="view-status" class="panel"><div id="status-content"></div></div>
@@ -219,12 +244,17 @@
 
 <div class="modal-overlay" id="import-modal">
     <div class="modal">
-        <h3>📥 movedata.js をインポート</h3>
-        <p>既存の movedata.js の内容を貼り付けてください。現在の編集内容は上書きされます。</p>
-        <textarea id="import-text" placeholder="const MOVE_DATA = [ ... ];"></textarea>
+        <h3>📥 movedata.js をインポ�EチE/h3>
+        <p>movedata.js をドロチE�Eするか、クリチE��してファイルを選択してください。現在の編雁E�E容は上書きされます、E/p>
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()"
+            ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+            <div class="drop-zone-icon">📂</div>
+            <div class="drop-zone-text" id="drop-text"><strong>クリチE��</strong>また�EファイルをここにドロチE�E</div>
+        </div>
+        <input type="file" id="file-input" accept=".js" style="display:none" onchange="onFileSelect(event)">
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeImportModal()">キャンセル</button>
-            <button class="btn-sm" onclick="doImport()">インポート実行</button>
+            <button class="btn-sm" id="import-exec-btn" onclick="doImport()" disabled style="opacity:0.4">インポ�Eト実衁E/button>
         </div>
     </div>
 </div>
@@ -233,8 +263,11 @@
 <script>
 const THEME_KEY   = 'starward_theme';
 const DB_KEY      = 'starward_movedb_edit';
-const HB_ORDER    = { 強:0, 普通:1, 弱:2 };
+const HB_ORDER    = { 強:0, 普送E1, 弱:2, 特殁E3, ビ�Eム:4, 実弾:5, 強実弾:6, ファンネル:7, 照射:8 };
 const IMAGE_BASE  = 'https://raw.githubusercontent.com/Ala-Aster/Starward_tools/main/image';
+
+const HB_CLASS = { 強:'hb-strong', 普送E'hb-normal', 弱:'hb-weak', 特殁E'hb-special', ビ�Eム:'hb-beam', 実弾:'hb-bullet', 強実弾:'hb-sbullet', ファンネル:'hb-funnel', 照射:'hb-shine' };
+function hbClass(v) { return HB_CLASS[v] || 'hb-normal'; }
 
 const DEFAULT_STATUS = { hp: 0, boostCount: 0, boostDist: 0, lockDist: 0 };
 
@@ -270,14 +303,16 @@ function loadDB() {
 }
 function flashSaved() {
     const el = document.getElementById('save-indicator');
-    el.textContent = '✓  保存済み'; el.classList.add('saved');
+    el.textContent = '✁E 保存済み'; el.classList.add('saved');
     clearTimeout(el._t);
-    el._t = setTimeout(() => { el.textContent = '●  自動保存'; el.classList.remove('saved'); }, 2000);
+    el._t = setTimeout(() => { el.textContent = '◁E 自動保孁E; el.classList.remove('saved'); }, 2000);
 }
 
-// ---- エクスポート ----
-function exportJS() {
+// ---- エクスポ�EチE----
+function buildExportContent(cost) {
+    const varName = 'MOVE_DATA_' + cost.replace('.', '_');
     const data = chars.filter(c => {
+        if (c.cost !== cost) return false;
         const s = c.status;
         return c.moves.length > 0 || c.combos.length > 0 || c.memo.trim()
             || s.hp || s.boostCount || s.boostDist || s.lockDist;
@@ -288,22 +323,71 @@ function exportJS() {
         const statusStr = JSON.stringify(c.status);
         return `  {\n    id: ${JSON.stringify(c.id)},\n    status: ${statusStr},\n    moves: ${movesStr},\n    combos: ${combosStr},\n    memo: ${JSON.stringify(c.memo)}\n  }`;
     });
-    const content = `// ============================================================\n//  movedata.js — 星之翼 技データベース\n// ============================================================\n\nconst MOVE_DATA = [\n${lines.join(',\n')}\n];\n`;
+    return `// ============================================================\n//  movedata_${cost}.js  E星之翼 技チE�Eタベ�Eス�E�コスチE${cost}�E�\n// ============================================================\n\nconst ${varName} = [\n${lines.join(',\n')}\n];\n`;
+}
+
+function exportJS(cost) {
+    const content = buildExportContent(cost);
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([content], { type: 'text/javascript' }));
-    a.download = 'movedata.js'; a.click();
+    a.download = `movedata_${cost}.js`; a.click();
     URL.revokeObjectURL(a.href);
 }
 
-// ---- インポート ----
-function openImportModal()  { document.getElementById('import-modal').classList.add('open'); document.getElementById('import-text').value = ''; }
+function exportAllJS() {
+    ['3.0', '2.5', '2.0', '1.5'].forEach((cost, i) => {
+        setTimeout(() => exportJS(cost), i * 300);
+    });
+}
+
+// ---- インポ�EチE----
+let importFileText = null;
+
+function openImportModal() {
+    importFileText = null;
+    document.getElementById('import-modal').classList.add('open');
+    const zone = document.getElementById('drop-zone');
+    zone.classList.remove('loaded', 'dragover');
+    zone.querySelector('.drop-zone-icon').textContent = '📂';
+    document.getElementById('drop-text').innerHTML = '<strong>クリチE��</strong>また�EファイルをここにドロチE�E';
+    const btn = document.getElementById('import-exec-btn');
+    btn.disabled = true; btn.style.opacity = '0.4';
+    document.getElementById('file-input').value = '';
+}
 function closeImportModal() { document.getElementById('import-modal').classList.remove('open'); }
+
+function onDragOver(e)  { e.preventDefault(); document.getElementById('drop-zone').classList.add('dragover'); }
+function onDragLeave(e) { document.getElementById('drop-zone').classList.remove('dragover'); }
+function onDrop(e) {
+    e.preventDefault();
+    document.getElementById('drop-zone').classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) readImportFile(file);
+}
+function onFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) readImportFile(file);
+}
+function readImportFile(file) {
+    if (!file.name.endsWith('.js')) { alert('.js ファイルを選択してください'); return; }
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        importFileText = ev.target.result;
+        const zone = document.getElementById('drop-zone');
+        zone.classList.add('loaded');
+        zone.querySelector('.drop-zone-icon').textContent = '✁E;
+        document.getElementById('drop-text').textContent = file.name + ' を読み込みました';
+        const btn = document.getElementById('import-exec-btn');
+        btn.disabled = false; btn.style.opacity = '1';
+    };
+    reader.readAsText(file);
+}
 function doImport() {
-    const text = document.getElementById('import-text').value.trim();
+    if (!importFileText) return;
     try {
-        const match = text.match(/const\s+MOVE_DATA\s*=\s*(\[[\s\S]*?\])\s*;/);
+        // MOVE_DATA_3_0 / MOVE_DATA_2_5 形式と旧 MOVE_DATA 形式�E両方に対忁E        const match = importFileText.match(/const\s+MOVE_DATA(?:_\d_\d)?\s*=\s*(\[[\s\S]*?\])\s*;/);
         if (!match) throw new Error('形式が正しくありません');
-        const data = JSON.parse(match[1]);
+        // JSON形式�EJSオブジェクト形式どちらにも対忁E        const data = Function('"use strict"; return (' + match[1] + ')')();
         data.forEach(d => {
             const c = chars.find(x => x.id === d.id);
             if (c) {
@@ -314,10 +398,10 @@ function doImport() {
             }
         });
         saveDB(); renderCharList(); renderActiveTab(); closeImportModal();
-    } catch(e) { alert('インポートに失敗しました。\n' + e.message); }
+    } catch(e) { alert('インポ�Eトに失敗しました、En' + e.message); }
 }
 
-// ---- テーマ ----
+// ---- チE�EチE----
 function setTheme(name) {
     if (name === 'dark') document.documentElement.removeAttribute('data-theme');
     else document.documentElement.setAttribute('data-theme', name);
@@ -326,7 +410,7 @@ function setTheme(name) {
     document.getElementById('t-' + name)?.classList.add('active');
 }
 
-// ---- キャラリスト ----
+// ---- キャラリスチE----
 function setCostFilter(el, val) {
     costFilter = val;
     document.querySelectorAll('.cost-pill').forEach(p => p.classList.remove('active'));
@@ -339,7 +423,7 @@ function renderCharList() {
         const hasData = c.moves.length > 0 || c.combos.length > 0 || c.memo.trim()
             || c.status.hp || c.status.boostCount || c.status.boostDist || c.status.lockDist;
         return `<div class="char-item${selId===c.id?' active':''}" onclick="selectChar('${c.id}')">
-            <span>${c.name}${hasData?'<span class="has-data">●</span>':''}</span>
+            <span>${c.name}${hasData?'<span class="has-data">◁E/span>':''}</span>
             <span class="char-cost-badge">${c.cost}</span>
         </div>`;
     }).join('');
@@ -349,7 +433,7 @@ function selectChar(id) {
     renderCharList(); renderActiveTab();
 }
 
-// ---- タブ ----
+// ---- タチE----
 function switchTab(tab) {
     activeTab = tab; editingMoveIdx = -1; editingComboIdx = -1;
     ['status','moves','combos','memo'].forEach(t => {
@@ -365,7 +449,7 @@ function renderActiveTab() {
     else if (activeTab==='memo')   renderMemo();
 }
 
-// ---- ステータス ----
+// ---- スチE�Eタス ----
 function getChar() { return chars.find(x => x.id === selId); }
 
 function renderStatus() {
@@ -380,7 +464,7 @@ function renderStatus() {
 
     el.innerHTML = `
         <div class="panel-header">
-            <span class="panel-title">${c.name} <span style="font-size:13px;font-weight:400;color:var(--text-sub)">コスト ${c.cost}</span></span>
+            <span class="panel-title">${c.name} <span style="font-size:13px;font-weight:400;color:var(--text-sub)">コスチE${c.cost}</span></span>
         </div>
         <div class="status-panel">
             <div class="status-img-wrap">
@@ -389,26 +473,26 @@ function renderStatus() {
             <div class="status-fields">
                 <div class="status-field">
                     <label>HP</label>
-                    <input type="number" id="st-hp" value="${s.hp||''}" placeholder="例: 620" min="0">
+                    <input type="number" id="st-hp" value="${s.hp||''}" placeholder="侁E 620" min="0">
                 </div>
                 <div class="status-field">
-                    <label>ブースト回数</label>
-                    <input type="number" id="st-boostCount" value="${s.boostCount||''}" placeholder="例: 3" min="0">
+                    <label>ブ�Eスト回数</label>
+                    <input type="number" id="st-boostCount" value="${s.boostCount||''}" placeholder="侁E 3" min="0">
                 </div>
                 <div class="status-field">
-                    <label>ブースト距離</label>
-                    <input type="number" id="st-boostDist" value="${s.boostDist||''}" placeholder="例: 70" min="0">
+                    <label>ブ�Eスト距離</label>
+                    <input type="number" id="st-boostDist" value="${s.boostDist||''}" placeholder="侁E 70" min="0">
                 </div>
                 <div class="status-field">
-                    <label>ロック距離</label>
-                    <input type="number" id="st-lockDist" value="${s.lockDist||''}" placeholder="例: 200" min="0">
+                    <label>ロチE��距離</label>
+                    <input type="number" id="st-lockDist" value="${s.lockDist||''}" placeholder="侁E 200" min="0">
                 </div>
             </div>
         </div>
         <div class="status-save-btn">
-            <button class="btn-sm" onclick="saveStatus()">保存</button>
+            <button class="btn-sm" onclick="saveStatus()">保孁E/button>
         </div>
-        <p class="hint" style="margin-top:6px">変更後は「保存」を押してください</p>`;
+        <p class="hint" style="margin-top:6px">変更後�E「保存」を押してください</p>`;
 }
 
 function saveStatus() {
@@ -438,32 +522,44 @@ function renderMoves() {
         });
     }
     const mx = moves.length ? Math.max(...moves.map(m=>m.dmg),1) : 1;
-    const sa = key => key===sortKey?(sortAsc?' ↑':' ↓'):' ↕';
+    const sa = key => key===sortKey?(sortAsc?' ↁE:' ↁE):' ↁE;
     const th = key => `onclick="doSort('${key}')"`;
     const rows = c.moves.map((m, ri) => {
         if (ri === editingMoveIdx) {
             return `<tr class="editing">
+                <td></td>
                 <td><input id="em-name"    value="${esc(m.name)}"></td>
                 <td><input id="em-input"   value="${esc(m.input)}"></td>
                 <td><input id="em-startup" type="number" value="${m.startup}" style="width:60px"></td>
                 <td><select id="em-hitbox">
-                    <option value="強"   ${m.hitbox==='強'?'selected':''}>強</option>
-                    <option value="普通" ${m.hitbox==='普通'?'selected':''}>普通</option>
-                    <option value="弱"   ${m.hitbox==='弱'?'selected':''}>弱</option>
+                    <option value="強"       ${m.hitbox==='強'?'selected':''}>強</option>
+                    <option value="普送E     ${m.hitbox==='普送E?'selected':''}>普送E/option>
+                    <option value="弱"       ${m.hitbox==='弱'?'selected':''}>弱</option>
+                    <option value="特殁E     ${m.hitbox==='特殁E?'selected':''}>特殁E/option>
+                    <option value="ビ�Eム"   ${m.hitbox==='ビ�Eム'?'selected':''}>ビ�Eム</option>
+                    <option value="実弾"     ${m.hitbox==='実弾'?'selected':''}>実弾</option>
+                    <option value="強実弾"   ${m.hitbox==='強実弾'?'selected':''}>強実弾</option>
+                    <option value="ファンネル" ${m.hitbox==='ファンネル'?'selected':''}>ファンネル</option>
                 </select></td>
                 <td><input id="em-dmg"  type="number" value="${m.dmg}"  style="width:70px"></td>
                 <td><input id="em-note" value="${esc(m.note||'')}"></td>
                 <td style="white-space:nowrap">
-                    <button class="btn-icon confirm" onclick="confirmEditMove(${ri})" title="確定">✓</button>
-                    <button class="btn-icon cancel"  onclick="cancelEditMove()"       title="キャンセル">✕</button>
+                    <button class="btn-icon confirm" onclick="confirmEditMove(${ri})" title="確宁E>✁E/button>
+                    <button class="btn-icon cancel"  onclick="cancelEditMove()"       title="キャンセル">✁E/button>
                 </td>
             </tr>`;
         }
-        return `<tr onclick="startEditMove(${ri})" style="cursor:pointer">
+        return `<tr draggable="true" data-idx="${ri}"
+            ondragstart="onMoveDragStart(event,${ri})"
+            ondragover="onMoveDragOver(event,${ri})"
+            ondragleave="onMoveDragLeave(event)"
+            ondrop="onMoveDrop(event,${ri})"
+            onclick="startEditMove(${ri})" style="cursor:pointer">
+            <td><span class="drag-handle" onclick="event.stopPropagation()">⠿</span></td>
             <td style="font-weight:600">${esc(m.name)}</td>
             <td><span class="mono">${esc(m.input)}</span></td>
             <td><span class="badge-f">${m.startup}F</span></td>
-            <td><span class="${m.hitbox==='強'?'hb-strong':m.hitbox==='弱'?'hb-weak':'hb-normal'}">${m.hitbox}</span></td>
+            <td><span class="${hbClass(m.hitbox)}">${m.hitbox}</span></td>
             <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(m.dmg/mx*100)}%"></div></div><span class="dmg-val">${m.dmg}</span></div></td>
             <td style="font-size:12px;color:var(--text-sub)">${esc(m.note||'')}</td>
             <td><button class="btn-icon del" onclick="delMove(event,${ri})">🗑</button></td>
@@ -471,28 +567,29 @@ function renderMoves() {
     }).join('');
     el.innerHTML = `
         <div class="panel-header">
-            <span class="panel-title">${c.name} <span style="font-size:13px;font-weight:400;color:var(--text-sub)">コスト ${c.cost}</span></span>
+            <span class="panel-title">${c.name} <span style="font-size:13px;font-weight:400;color:var(--text-sub)">コスチE${c.cost}</span></span>
         </div>
-        <p class="hint" style="margin-bottom:8px">行をクリックして編集</p>
+        <p class="hint" style="margin-bottom:8px">行をクリチE��して編雁E/p>
         <div class="tbl-wrap"><table>
             <thead><tr>
-                <th ${th('name')}    class="${sortKey==='name'?'sorted':''}">技名${sa('name')}</th>
-                <th ${th('input')}   class="${sortKey==='input'?'sorted':''}">入力${sa('input')}</th>
-                <th ${th('startup')} class="${sortKey==='startup'?'sorted':''}">発生${sa('startup')}</th>
-                <th ${th('hitbox')}  class="${sortKey==='hitbox'?'sorted':''}">判定${sa('hitbox')}</th>
+                <th style="width:20px"></th>
+                <th ${th('name')}    class="${sortKey==='name'?'sorted':''}">技吁E{sa('name')}</th>
+                <th ${th('input')}   class="${sortKey==='input'?'sorted':''}">入劁E{sa('input')}</th>
+                <th ${th('startup')} class="${sortKey==='startup'?'sorted':''}">発甁E{sa('startup')}</th>
+                <th ${th('hitbox')}  class="${sortKey==='hitbox'?'sorted':''}">判宁E{sa('hitbox')}</th>
                 <th ${th('dmg')}     class="${sortKey==='dmg'?'sorted':''}">ダメージ${sa('dmg')}</th>
-                <th>備考</th><th></th>
+                <th>備老E/th><th></th>
             </tr></thead>
-            <tbody>${rows||'<tr><td colspan="7" class="empty">技が登録されていません</td></tr>'}</tbody>
+            <tbody>${rows||'<tr><td colspan="7" class="empty">技が登録されてぁE��せん</td></tr>'}</tbody>
         </table></div>
         <div class="add-row">
-            <input type="text"   id="m-name"    placeholder="技名">
-            <input type="text"   id="m-input"   placeholder="入力 例:格闘">
+            <input type="text"   id="m-name"    placeholder="技吁E>
+            <input type="text"   id="m-input"   placeholder="入劁E侁E格闁E>
             <input type="number" id="m-startup" placeholder="発生F" min="1">
-            <select id="m-hitbox"><option value="強">強</option><option value="普通" selected>普通</option><option value="弱">弱</option></select>
+            <select id="m-hitbox"><option value="強">強</option><option value="普送E selected>普送E/option><option value="弱">弱</option><option value="特殁E>特殁E/option><option value="ビ�Eム">ビ�Eム</option><option value="実弾">実弾</option><option value="強実弾">強実弾</option><option value="ファンネル">ファンネル</option></select>
             <input type="number" id="m-dmg"     placeholder="ダメ">
-            <input type="text"   id="m-note"    placeholder="備考">
-            <button class="btn-sm" onclick="addMove()">＋ 追加</button>
+            <input type="text"   id="m-note"    placeholder="備老E>
+            <button class="btn-sm" onclick="addMove()">�E�E追加</button>
         </div>`;
 }
 function startEditMove(idx)  { editingMoveIdx = idx; renderMoves(); document.getElementById('em-name')?.focus(); }
@@ -501,7 +598,7 @@ function confirmEditMove(idx) {
     const c = getChar();
     c.moves[idx] = {
         name:    document.getElementById('em-name').value.trim()    || c.moves[idx].name,
-        input:   document.getElementById('em-input').value.trim()   || '—',
+        input:   document.getElementById('em-input').value.trim()   || ' E,
         startup: parseInt(document.getElementById('em-startup').value) || 0,
         hitbox:  document.getElementById('em-hitbox').value,
         dmg:     parseInt(document.getElementById('em-dmg').value)  || 0,
@@ -510,16 +607,46 @@ function confirmEditMove(idx) {
     editingMoveIdx = -1; saveDB(); renderMoves(); renderCharList();
 }
 function doSort(key) { if (sortKey===key) sortAsc=!sortAsc; else { sortKey=key; sortAsc=true; } renderMoves(); }
+
+// ---- 技D&D ----
+let dragSrcIdx = -1;
+function onMoveDragStart(e, idx) {
+    dragSrcIdx = idx;
+    e.dataTransfer.effectAllowed = 'move';
+    setTimeout(() => { const tr = e.target.closest('tr'); if(tr) tr.classList.add('dragging'); }, 0);
+}
+function onMoveDragOver(e, idx) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('tr.drag-over').forEach(r => r.classList.remove('drag-over'));
+    const tr = e.target.closest('tr');
+    if (tr && idx !== dragSrcIdx) tr.classList.add('drag-over');
+}
+function onMoveDragLeave(e) {
+    const tr = e.target.closest('tr');
+    if (tr) tr.classList.remove('drag-over');
+}
+function onMoveDrop(e, idx) {
+    e.preventDefault();
+    document.querySelectorAll('tr.dragging, tr.drag-over').forEach(r => r.classList.remove('dragging','drag-over'));
+    if (dragSrcIdx === -1 || dragSrcIdx === idx) return;
+    const c = getChar();
+    const moved = c.moves.splice(dragSrcIdx, 1)[0];
+    c.moves.splice(idx, 0, moved);
+    dragSrcIdx = -1;
+    editingMoveIdx = -1;
+    saveDB(); renderMoves();
+}
 function addMove() {
     const c = getChar();
     const name = document.getElementById('m-name').value.trim();
     if (!name) return;
-    c.moves.push({ name, input: document.getElementById('m-input').value.trim()||'—', startup: parseInt(document.getElementById('m-startup').value)||0, hitbox: document.getElementById('m-hitbox').value, dmg: parseInt(document.getElementById('m-dmg').value)||0, note: document.getElementById('m-note').value.trim() });
+    c.moves.push({ name, input: document.getElementById('m-input').value.trim()||' E, startup: parseInt(document.getElementById('m-startup').value)||0, hitbox: document.getElementById('m-hitbox').value, dmg: parseInt(document.getElementById('m-dmg').value)||0, note: document.getElementById('m-note').value.trim() });
     saveDB(); renderMoves(); renderCharList();
 }
 function delMove(e, idx) { e.stopPropagation(); getChar().moves.splice(idx,1); if(editingMoveIdx===idx) editingMoveIdx=-1; saveDB(); renderMoves(); renderCharList(); }
 
-// ---- コンボ ----
+// ---- コンチE----
 function renderCombos() {
     const el = document.getElementById('combos-content');
     const c = getChar();
@@ -527,12 +654,12 @@ function renderCombos() {
     const items = c.combos.map((co, i) => {
         if (i === editingComboIdx) {
             return `<div class="combo-item editing">
-                <input id="ec-input" value="${esc(co.input)}" placeholder="コンボ入力">
+                <input id="ec-input" value="${esc(co.input)}" placeholder="コンボ�E劁E>
                 <input id="ec-dmg"   value="${co.dmg}" type="number" style="width:70px" placeholder="ダメ">
-                <input id="ec-note"  value="${esc(co.note||'')}" placeholder="備考">
+                <input id="ec-note"  value="${esc(co.note||'')}" placeholder="備老E>
                 <span style="white-space:nowrap">
-                    <button class="btn-icon confirm" onclick="confirmEditCombo(${i})" title="確定">✓</button>
-                    <button class="btn-icon cancel"  onclick="cancelEditCombo()"      title="キャンセル">✕</button>
+                    <button class="btn-icon confirm" onclick="confirmEditCombo(${i})" title="確宁E>✁E/button>
+                    <button class="btn-icon cancel"  onclick="cancelEditCombo()"      title="キャンセル">✁E/button>
                 </span>
             </div>`;
         }
@@ -544,14 +671,14 @@ function renderCombos() {
         </div>`;
     }).join('');
     el.innerHTML = `
-        <div class="panel-header"><span class="panel-title">${c.name} — コンボ</span></div>
-        <p class="hint" style="margin-bottom:8px">行をクリックして編集</p>
-        ${items||'<div class="empty">コンボが登録されていません</div>'}
+        <div class="panel-header"><span class="panel-title">${c.name}  EコンチE/span></div>
+        <p class="hint" style="margin-bottom:8px">行をクリチE��して編雁E/p>
+        ${items||'<div class="empty">コンボが登録されてぁE��せん</div>'}
         <div class="add-combo-row">
-            <input type="text"   id="co-input" placeholder="コンボ入力 例: 格闘→格闘→BA">
+            <input type="text"   id="co-input" placeholder="コンボ�E劁E侁E 格闘�E格闘�EBA">
             <input type="number" id="co-dmg"   placeholder="合計ダメ">
-            <input type="text"   id="co-note"  placeholder="備考">
-            <button class="btn-sm" onclick="addCombo()">＋ 追加</button>
+            <input type="text"   id="co-note"  placeholder="備老E>
+            <button class="btn-sm" onclick="addCombo()">�E�E追加</button>
         </div>`;
 }
 function startEditCombo(idx) { editingComboIdx = idx; renderCombos(); document.getElementById('ec-input')?.focus(); }
@@ -576,9 +703,9 @@ function renderMemo() {
     const c = getChar();
     if (!c) { el.innerHTML = '<div class="no-select">左のリストからキャラクターを選択してください</div>'; return; }
     el.innerHTML = `
-        <div class="panel-header"><span class="panel-title">${c.name} — 攻略メモ</span></div>
+        <div class="panel-header"><span class="panel-title">${c.name}  E攻略メモ</span></div>
         <textarea class="memo-area" oninput="saveMemo(this.value)">${c.memo||''}</textarea>
-        <p class="hint">自動保存されます</p>`;
+        <p class="hint">自動保存されまぁE/p>`;
 }
 function saveMemo(val) { const c=getChar(); if(c){c.memo=val; saveDB(); renderCharList();} }
 
