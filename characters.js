@@ -76,6 +76,8 @@ const CHARACTER_DATA = [
   { id: "c020", name: "クリスタ",             kana: "くりすた",                 cost: "2.0", hasRare: 3 },
   { id: "c021", name: "タチアナ",             kana: "たちあな",                 cost: "2.0", hasRare: 1 },
   { id: "c022", name: "フィービー",           kana: "ふぃーびー",               cost: "2.0", hasRare: 2 },
+  { id: "c023", name: "レム",                 kana: "れむ",                     cost: "2.0", hasRare: 2 },
+  
 
   // --- コスト 1.5 ---
   { id: "c001", name: "オーキッド",           kana: "おーきっど",               cost: "1.5", hasRare: 0 },
