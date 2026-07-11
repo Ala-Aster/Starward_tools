@@ -52,6 +52,7 @@ const CHARACTER_DATA = [
   { id: "c022", name: "レキ",                 kana: "れき",                     cost: "2.5", hasRare: 0 },
   { id: "c023", name: "ブラック★ロックシューター", kana: "ぶらっくろっくしゅーたー", cost: "2.5", hasRare: 0 },
   { id: "c024", name: "デッドマスター",       kana: "でっどますたー",           cost: "2.5", hasRare: 0 },
+  { id: "c025", name: "レミエル",       kana: "れみえる",           cost: "2.5", hasRare: 0 },
 
   // --- コスト 2.0 ---
   { id: "c001", name: "ベータ",               kana: "べーた",                   cost: "2.0", hasRare: 0 },
