@@ -74,6 +74,44 @@ function setupEventListeners() {
     });
     document.getElementById('saveImgBtn').addEventListener('click', saveImage);
 
+    // ---- 背景画像 ----
+    document.getElementById('bgImageInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+                const fit = document.getElementById('bgFitSelect').value;
+                grid.setBackgroundImage(img, fit);
+                render();
+                showStatus('背景画像を設定しました', 'success');
+            };
+            img.onerror = () => showStatus('画像を読み込めませんでした', 'danger');
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+        e.target.value = ''; // 同じファイルを選び直せるようにリセット
+    });
+
+    document.getElementById('bgFitSelect').addEventListener('change', (e) => {
+        if (grid.bgImage) {
+            grid.bgFit = e.target.value;
+            render();
+        }
+    });
+
+    document.getElementById('bgClearBtn').addEventListener('click', () => {
+        grid.clearBackgroundImage();
+        render();
+        showStatus('背景を方眼紙に戻しました');
+    });
+
+    document.getElementById('gridLineToggle').addEventListener('change', (e) => {
+        grid.setShowGridLines(e.target.checked);
+        render();
+    });
+
     canvas.addEventListener('mousedown',   onMouseDown);
     canvas.addEventListener('mousemove',   onMouseMove);
     canvas.addEventListener('mouseup',     onMouseUp);

@@ -8,10 +8,63 @@ class Grid {
         this.cols = 15;
         this.width = this.cols * this.cellSize;
         this.height = this.rows * this.cellSize;
-        
+
+        // 背景画像関連
+        this.bgImage = null;
+        this.bgFit = 'cover'; // 'cover'（枠に合わせる） | 'none'（原寸のまま）
+        this.showGridLines = true;
+
         // キャンバスサイズを設定
         this.canvas.width = this.width;
         this.canvas.height = this.height;
+    }
+
+    /**
+     * 背景画像を設定
+     */
+    setBackgroundImage(img, fit = 'cover') {
+        this.bgImage = img;
+        this.bgFit = fit;
+    }
+
+    /**
+     * 背景画像を解除（方眼紙に戻す）
+     */
+    clearBackgroundImage() {
+        this.bgImage = null;
+    }
+
+    /**
+     * グリッド線の表示切替
+     */
+    setShowGridLines(show) {
+        this.showGridLines = show;
+    }
+
+    /**
+     * 背景（画像 or 方眼紙の下地色）を描画
+     */
+    drawBackground() {
+        const ctx = this.ctx;
+        const cw = this.width, ch = this.height;
+
+        ctx.fillStyle = '#fafaf8';
+        ctx.fillRect(0, 0, cw, ch);
+
+        if (!this.bgImage) return;
+
+        const img = this.bgImage;
+        if (this.bgFit === 'cover') {
+            // キャンバス全体を覆うように拡大縮小（はみ出た部分はトリミング）
+            const scale = Math.max(cw / img.width, ch / img.height);
+            const dw = img.width * scale, dh = img.height * scale;
+            const dx = (cw - dw) / 2, dy = (ch - dh) / 2;
+            ctx.drawImage(img, dx, dy, dw, dh);
+        } else {
+            // 原寸のまま中央配置（キャンバスより大きい/小さい場合そのまま）
+            const dx = (cw - img.width) / 2, dy = (ch - img.height) / 2;
+            ctx.drawImage(img, dx, dy);
+        }
     }
 
     /**
@@ -19,13 +72,13 @@ class Grid {
      */
     draw() {
         const ctx = this.ctx;
-        
-        // 背景色
-        ctx.fillStyle = '#fafaf8';
-        ctx.fillRect(0, 0, this.width, this.height);
 
-        // グリッド線
-        ctx.strokeStyle = '#e5ddd5';
+        this.drawBackground();
+
+        if (!this.showGridLines) return;
+
+        // グリッド線（背景画像がある時は少し薄くして視認性を確保）
+        ctx.strokeStyle = this.bgImage ? 'rgba(180,170,160,0.55)' : '#e5ddd5';
         ctx.lineWidth = 1;
         ctx.setLineDash([]);
 

@@ -77,6 +77,21 @@
                 </div>
             </div>
 
+            <div class="section">
+                <h3>背景画像</h3>
+                <label class="btn btn-file" for="bgImageInput">🖼 画像を選択</label>
+                <input type="file" id="bgImageInput" accept="image/*" style="display:none;">
+                <select id="bgFitSelect" class="select-fit">
+                    <option value="cover">フィット（枠に合わせる）</option>
+                    <option value="none">原寸のまま</option>
+                </select>
+                <button id="bgClearBtn" class="btn btn-action btn-danger" style="width:100%; display:block; margin-top:7px;">方眼紙に戻す</button>
+                <label class="checkbox-line">
+                    <input type="checkbox" id="gridLineToggle" checked>
+                    グリッド線を表示
+                </label>
+            </div>
+
             <div class="status-section">
                 <p id="statusMsg" class="status-msg"></p>
             </div>
