@@ -55,7 +55,8 @@ const CHARACTER_DATA = [
   { id: "c023", name: "ブラック★ロックシューター", kana: "ぶらっくろっくしゅーたー", cost: "2.5", hasRare: 0 },
   { id: "c024", name: "デッドマスター",       kana: "でっどますたー",           cost: "2.5", hasRare: 0 },
   { id: "c025", name: "レミエル",       kana: "れみえる",           cost: "2.5", hasRare: 0 },
-  { id: "c026", name: "陸戦エリシア",       kana: "りくせんえりしあ",           cost: "2.5", hasRare: 0 },
+  { id: "c026", name: "シモーナ",       kana: "しもーな",           cost: "2.5", hasRare: 0 },
+  { id: "c027", name: "陸戦エリシア",       kana: "りくせんえりしあ",           cost: "2.5", hasRare: 0 },
 
   // --- コスト 2.0 ---
   { id: "c001", name: "ベータ",               kana: "べーた",                   cost: "2.0", hasRare: 0 },
@@ -81,6 +82,7 @@ const CHARACTER_DATA = [
   { id: "c021", name: "タチアナ",             kana: "たちあな",                 cost: "2.0", hasRare: 1 },
   { id: "c022", name: "フィービー",           kana: "ふぃーびー",               cost: "2.0", hasRare: 2 },
   { id: "c023", name: "レム",                 kana: "れむ",                     cost: "2.0", hasRare: 2 },
+  { id: "c024", name: "レア",                 kana: "れあ",                     cost: "2.0", hasRare: 2 },
   
 
   // --- コスト 1.5 ---
