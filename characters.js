@@ -57,11 +57,12 @@ const CHARACTER_DATA = [
   { id: "c025", name: "レミエル",       kana: "れみえる",           cost: "2.5", hasRare: 0 },
   { id: "c026", name: "シモーナ",       kana: "しもーな",           cost: "2.5", hasRare: 0 },
   { id: "c027", name: "陸戦エリシア",       kana: "りくせんえりしあ",           cost: "2.5", hasRare: 0 },
+  { id: "c028", name: "セラフィム",           kana: "せらふぃむ",               cost: "2.0", hasRare: 0 },
 
   // --- コスト 2.0 ---
   { id: "c001", name: "ベータ",               kana: "べーた",                   cost: "2.0", hasRare: 0 },
   { id: "c002", name: "デュカリオン",         kana: "でゅかりおん",             cost: "2.0", hasRare: 2 },
-  { id: "c003", name: "セラフィム",           kana: "せらふぃむ",               cost: "2.0", hasRare: 0 },
+
   { id: "c004", name: "アイーダ",             kana: "あいーだ",                 cost: "2.0", hasRare: 2 },
   { id: "c005", name: "パラス",               kana: "ぱらす",                   cost: "2.0", hasRare: 0 },
   { id: "c006", name: "スコーピオン",         kana: "すこーぴおん",             cost: "2.0", hasRare: 1 },
