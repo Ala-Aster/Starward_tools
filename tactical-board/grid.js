@@ -102,45 +102,6 @@ class Grid {
     }
 
     /**
-     * マウス座標をグリッドセルに変換
-     */
-    getCellFromPixel(x, y) {
-        const rect = this.canvas.getBoundingClientRect();
-        const canvasX = x - rect.left;
-        const canvasY = y - rect.top;
-
-        const col = Math.floor(canvasX / this.cellSize);
-        const row = Math.floor(canvasY / this.cellSize);
-
-        // グリッド範囲内かチェック
-        if (col < 0 || col >= this.cols || row < 0 || row >= this.rows) {
-            return null;
-        }
-
-        return { row, col };
-    }
-
-    /**
-     * グリッドセルをピクセル座標に変換（セル中央）
-     */
-    getPixelFromCell(row, col) {
-        const x = col * this.cellSize + this.cellSize / 2;
-        const y = row * this.cellSize + this.cellSize / 2;
-        return { x, y };
-    }
-
-    /**
-     * キャンバス内の実座標を取得
-     */
-    getCanvasCoordinates(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        };
-    }
-
-    /**
      * グリッド内かチェック
      */
     isInsideGrid(x, y) {

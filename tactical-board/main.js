@@ -153,7 +153,7 @@ function setMode(newMode) {
     } else if (newMode === 'eraser') {
         document.getElementById('eraserBtn').classList.add('active');
         canvas.style.cursor = 'cell';
-        showStatus('消しゴムモード');
+        showStatus('消しゴム — 左：触れた部分だけ消す／右：線ごと消す（コマも消える）');
     } else if (newMode === 'move') {
         document.getElementById('moveBtn').classList.add('active');
         canvas.style.cursor = 'grab';
@@ -162,20 +162,40 @@ function setMode(newMode) {
 }
 
 // ---- キャンバスイベント ----
-function applyEraser(clientX, clientY) {
-    arrows.erase(clientX, clientY);
-    const piece = pieces.getPieceAtPixel(clientX, clientY);
-    if (piece) pieces.removePiece(piece);
+// button: 0=左（部分消し・線のみ） / 2=右（線ごと消し＋コマ削除）
+function applyEraser(clientX, clientY, button) {
+    if (button === 2) {
+        arrows.erase(clientX, clientY);
+        const piece = pieces.getPieceAtPixel(clientX, clientY);
+        if (piece) pieces.removePiece(piece);
+    } else {
+        arrows.erasePartial(clientX, clientY);
+    }
+}
+
+// 前回位置から今回位置まで補間しながら消す（素早く動かしても取りこぼさない）
+let lastEraserPos = null;
+function eraseAlongPath(clientX, clientY, button) {
+    const from = lastEraserPos || { x: clientX, y: clientY };
+    const dist = Math.hypot(clientX - from.x, clientY - from.y);
+    const n = Math.max(1, Math.ceil(dist / (arrows.eraserWidth / 2)));
+    for (let k = 1; k <= n; k++) {
+        applyEraser(from.x + (clientX - from.x) * k / n, from.y + (clientY - from.y) * k / n, button);
+    }
+    lastEraserPos = { x: clientX, y: clientY };
 }
 
 function onMouseDown(e) {
     if (!grid.isInsideGrid(e.clientX, e.clientY)) return;
+    // 消しゴム以外は左ボタンのみ（右クリックで線が引かれないように）
+    if (mode !== 'eraser' && e.button !== 0) return;
     if (mode === 'freeDraw') {
         saveSnapshot();
         arrows.startStroke(e.clientX, e.clientY);
     } else if (mode === 'eraser') {
+        if (e.button !== 0 && e.button !== 2) return;
         saveSnapshot();
-        applyEraser(e.clientX, e.clientY);
+        eraseAlongPath(e.clientX, e.clientY, e.button);
     } else if (mode === 'piece' && selectedPieceType && selectedShape) {
         saveSnapshot();
         const rect = canvas.getBoundingClientRect();
@@ -193,20 +213,22 @@ function onMouseMove(e) {
     if (!grid.isInsideGrid(e.clientX, e.clientY)) return;
     if (mode === 'freeDraw' && arrows.strokeInProgress) {
         arrows.addPointToStroke(e.clientX, e.clientY); render();
-    } else if (mode === 'eraser' && e.buttons === 1) {
-        applyEraser(e.clientX, e.clientY); render();
+    } else if (mode === 'eraser' && (e.buttons === 1 || e.buttons === 2)) {
+        eraseAlongPath(e.clientX, e.clientY, e.buttons === 2 ? 2 : 0); render();
     } else if (mode === 'move' && pieces.draggedPiece) {
         pieces.dragPiece(e.clientX, e.clientY); render();
     }
 }
 
 function onMouseUp(e) {
+    lastEraserPos = null;
     if (mode === 'freeDraw') arrows.endStroke();
     if (mode === 'move' && pieces.draggedPiece) { pieces.endDrag(); canvas.style.cursor = 'grab'; }
     render();
 }
 
 function onMouseLeave(e) {
+    lastEraserPos = null;
     if (mode === 'freeDraw' && arrows.strokeInProgress) arrows.endStroke();
     if (pieces.draggedPiece) { pieces.endDrag(); canvas.style.cursor = 'grab'; }
     render();
@@ -250,7 +272,7 @@ function showStatus(msg, type = 'info') {
 
 // ---- 描画 ----
 function render() {
-    const ctx = canvas.getContext('2d');
+    const ctx = grid.ctx;
     grid.draw();
     arrows.draw(ctx);
     pieces.draw(ctx);
