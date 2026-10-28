@@ -12,6 +12,11 @@
             <div class="header-top">
                 <a class="back-link" href="../">← トップへ戻る</a>
                 <div class="header-actions">
+                    <div class="theme-switcher">
+                        <button class="btn-theme" data-theme="dark"   id="t-dark">ダーク</button>
+                        <button class="btn-theme" data-theme="light"  id="t-light">ライト</button>
+                        <button class="btn-theme" data-theme="custom" id="t-custom">クリーム</button>
+                    </div>
                     <button id="undoBtn"    class="btn btn-action" title="元に戻す (Ctrl+Z)">↩ Undo</button>
                     <button id="resetBtn"   class="btn btn-action btn-danger">🗑 リセット</button>
                     <button id="saveImgBtn" class="btn btn-action btn-save">💾 画像保存</button>
@@ -42,8 +47,12 @@
 
             <!-- コマ配置：A〜D × 4形 -->
             <div class="section">
-                <h3>コマを配置</h3>
-                <div class="piece-grid">
+                <h3>アイコンを配置</h3>
+                <select id="iconCategory" class="select-fit icon-category">
+                    <option value="basic">基本コマ（A〜D）</option>
+                    <option value="char">キャラクターアイコン</option>
+                </select>
+                <div id="basicPieces" class="piece-grid">
                     <!-- ヘッダー行 -->
                     <div class="piece-grid-spacer"></div>
                     <div class="piece-grid-shape-label">●</div>
@@ -75,6 +84,7 @@
                     <button class="btn btn-piece-cell piece-d" data-type="D" data-shape="triangle"></button>
                     <button class="btn btn-piece-cell piece-d" data-type="D" data-shape="star"></button>
                 </div>
+                <div id="charPalette" class="char-palette" style="display:none;"></div>
             </div>
 
             <div class="section">
@@ -102,6 +112,7 @@
         </div>
     </div>
 
+    <script src="../characters.js"></script>
     <script src="grid.js"></script>
     <script src="pieces.js"></script>
     <script src="arrows.js"></script>

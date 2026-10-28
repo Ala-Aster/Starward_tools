@@ -1,8 +1,25 @@
 // main.js
 let canvas, grid, pieces, arrows;
 let mode = 'freeDraw';
-let selectedPieceType = null;
-let selectedShape = null;
+let selectedSpec = null; // { kind:'basic', type, shape } | { kind:'char', charKey }
+
+// ---- テーマ（他ツールと共通のキー・3色） ----
+const THEME_KEY = 'starward_theme';
+const THEMES = ['dark', 'light', 'custom'];
+
+function setTheme(name) {
+    if (!THEMES.includes(name)) name = 'dark';
+    if (name === 'dark') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', name);
+    try { localStorage.setItem(THEME_KEY, name); } catch (e) {}
+    document.querySelectorAll('.btn-theme').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
+}
+
+function loadTheme() {
+    let saved = 'dark';
+    try { saved = localStorage.getItem(THEME_KEY) || 'dark'; } catch (e) {}
+    setTheme(saved);
+}
 
 // ---- Undoスタック（描画＋コマを一緒に管理）----
 const undoStack = [];
@@ -30,7 +47,10 @@ function init() {
     canvas = document.getElementById('boardCanvas');
     grid   = new Grid(canvas, 60);
     pieces = new Pieces(grid);
+    pieces.onImageLoad = render; // キャラ画像の読み込み完了で再描画
     arrows = new Arrows(grid, canvas);
+    loadTheme();
+    buildCharPalette();
     setupEventListeners();
     render();
 }
@@ -50,17 +70,21 @@ function setupEventListeners() {
         });
     });
 
+    document.querySelectorAll('.btn-theme').forEach(btn => {
+        btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+    });
+
+    // 基本コマ
     document.querySelectorAll('.btn-piece-cell').forEach(btn => {
         btn.addEventListener('click', () => {
-            const type  = btn.dataset.type;
-            const shape = btn.dataset.shape;
-            if (selectedPieceType === type && selectedShape === shape) {
-                clearPieceSelection();
-                setMode('freeDraw');
-                return;
-            }
-            selectPieceCell(type, shape, btn);
+            onPaletteClick({ kind: 'basic', type: btn.dataset.type, shape: btn.dataset.shape }, btn);
         });
+    });
+
+    // アイコン種類の切り替え（プルダウン）
+    document.getElementById('iconCategory').addEventListener('change', (e) => {
+        document.getElementById('basicPieces').style.display = e.target.value === 'basic' ? '' : 'none';
+        document.getElementById('charPalette').style.display = e.target.value === 'char' ? '' : 'none';
     });
 
     document.getElementById('undoBtn').addEventListener('click', doUndo);
@@ -124,22 +148,77 @@ function setupEventListeners() {
 }
 
 // ---- モード・コマ選択 ----
-function selectPieceCell(type, shape, btn) {
+function isSameSpec(a, b) {
+    if (!a || !b || a.kind !== b.kind) return false;
+    return a.kind === 'char' ? a.charKey === b.charKey : (a.type === b.type && a.shape === b.shape);
+}
+
+// パレットのアイコンをクリック：同じものをもう一度押すと選択解除（描画モードへ）
+function onPaletteClick(spec, btn) {
+    if (isSameSpec(selectedSpec, spec)) {
+        clearPieceSelection();
+        setMode('freeDraw');
+        return;
+    }
+    selectPiece(spec, btn);
+}
+
+function selectPiece(spec, btn) {
     clearPieceSelection();
-    selectedPieceType = type;
-    selectedShape = shape;
+    selectedSpec = spec;
     mode = 'piece';
     document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
     btn.classList.add('active-piece');
     canvas.style.cursor = 'cell';
-    const shapeNames = { circle:'丸', square:'四角', triangle:'三角', star:'星' };
-    showStatus(`${type}・${shapeNames[shape]}を配置（右クリックで削除）`);
+    if (spec.kind === 'char') {
+        const c = pieces.charMap[spec.charKey];
+        showStatus(`${c ? c.name : 'キャラ'}を配置（右クリックで削除）`);
+    } else {
+        const shapeNames = { circle:'丸', square:'四角', triangle:'三角', star:'星' };
+        showStatus(`${spec.type}・${shapeNames[spec.shape]}を配置（右クリックで削除）`);
+    }
 }
 
 function clearPieceSelection() {
-    selectedPieceType = null;
-    selectedShape = null;
-    document.querySelectorAll('.btn-piece-cell').forEach(b => b.classList.remove('active-piece'));
+    selectedSpec = null;
+    document.querySelectorAll('.btn-piece-cell, .btn-char-cell').forEach(b => b.classList.remove('active-piece'));
+}
+
+// キャラクターアイコンのパレットを characters.js から生成（コスト別）
+function buildCharPalette() {
+    const wrap = document.getElementById('charPalette');
+    if (typeof CHARACTER_DATA === 'undefined') {
+        wrap.textContent = 'characters.js を読み込めませんでした';
+        return;
+    }
+    ['3.0', '2.5', '2.0', '1.5'].forEach(cost => {
+        const list = CHARACTER_DATA.filter(c => c.cost === cost);
+        if (list.length === 0) return;
+
+        const title = document.createElement('div');
+        title.className = 'char-group-title';
+        title.textContent = `コスト ${cost}`;
+        wrap.appendChild(title);
+
+        const gridEl = document.createElement('div');
+        gridEl.className = 'char-grid';
+        list.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-char-cell';
+            btn.title = c.name;
+            const img = document.createElement('img');
+            img.src = `${IMAGE_BASE_URL}/${c.cost}/${c.id}.png`;
+            img.alt = c.name;
+            img.loading = 'lazy';
+            img.onerror = () => { img.remove(); btn.textContent = c.name.slice(0, 2); };
+            btn.appendChild(img);
+            btn.addEventListener('click', () => {
+                onPaletteClick({ kind: 'char', charKey: `${c.cost}_${c.id}` }, btn);
+            });
+            gridEl.appendChild(btn);
+        });
+        wrap.appendChild(gridEl);
+    });
 }
 
 function setMode(newMode) {
@@ -196,10 +275,10 @@ function onMouseDown(e) {
         if (e.button !== 0 && e.button !== 2) return;
         saveSnapshot();
         eraseAlongPath(e.clientX, e.clientY, e.button);
-    } else if (mode === 'piece' && selectedPieceType && selectedShape) {
+    } else if (mode === 'piece' && selectedSpec) {
         saveSnapshot();
         const rect = canvas.getBoundingClientRect();
-        pieces.addPiece(e.clientX - rect.left, e.clientY - rect.top, selectedPieceType, selectedShape);
+        pieces.addPiece(e.clientX - rect.left, e.clientY - rect.top, selectedSpec);
     } else if (mode === 'move') {
         if (pieces.startDrag(e.clientX, e.clientY)) {
             saveSnapshot();
@@ -236,6 +315,8 @@ function onMouseLeave(e) {
 
 function onContextMenu(e) {
     e.preventDefault();
+    // 描画モード中は描画に集中（右クリックでコマを消さない）
+    if (mode === 'freeDraw') return;
     const piece = pieces.getPieceAtPixel(e.clientX, e.clientY);
     if (piece) {
         saveSnapshot();
