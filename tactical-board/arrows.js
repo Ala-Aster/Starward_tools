@@ -10,21 +10,18 @@ class Arrows {
         this.eraserWidth = 15;
     }
 
-    setColor(color) { this.lineColor = color; }
-
-    startStroke(x, y) {
-        const rect = this.canvas.getBoundingClientRect();
+    // color: この線の色（省略時は lineColor）
+    startStroke(x, y, color = this.lineColor) {
         this.strokeInProgress = {
-            points: [{ x: x - rect.left, y: y - rect.top }],
-            color: this.lineColor,
+            points: [this.grid.toCanvas(x, y)],
+            color: color,
             width: this.lineWidth
         };
     }
 
     addPointToStroke(x, y) {
         if (!this.strokeInProgress) return;
-        const rect = this.canvas.getBoundingClientRect();
-        this.strokeInProgress.points.push({ x: x - rect.left, y: y - rect.top });
+        this.strokeInProgress.points.push(this.grid.toCanvas(x, y));
     }
 
     endStroke() {
@@ -38,15 +35,13 @@ class Arrows {
 
     // 右クリック用：消しゴムが触れた線を丸ごと消す
     erase(x, y, radius = this.eraserWidth) {
-        const rect = this.canvas.getBoundingClientRect();
-        const cx = x - rect.left, cy = y - rect.top;
+        const { x: cx, y: cy } = this.grid.toCanvas(x, y);
         this.strokes = this.strokes.filter(stroke => !this._hitsStroke(stroke, cx, cy, radius));
     }
 
     // 左クリック用：消しゴムが触れた部分だけを消す（線は途中で分割される）
     erasePartial(x, y, radius = this.eraserWidth) {
-        const rect = this.canvas.getBoundingClientRect();
-        const cx = x - rect.left, cy = y - rect.top;
+        const { x: cx, y: cy } = this.grid.toCanvas(x, y);
         const result = [];
 
         for (const stroke of this.strokes) {

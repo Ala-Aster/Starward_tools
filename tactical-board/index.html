@@ -30,19 +30,37 @@
 
             <div class="section">
                 <h3>描画モード</h3>
-                <button id="freeDrawBtn" class="btn btn-mode active">自由描画</button>
-                <button id="eraserBtn"   class="btn btn-mode">消しゴム</button>
-                <button id="moveBtn"     class="btn btn-mode">コマ移動</button>
+                <button id="freeDrawBtn" class="btn btn-mode active" title="押している間だけ切り替え: Q">自由描画 [Q]</button>
+                <button id="eraserBtn"   class="btn btn-mode" title="押している間だけ切り替え: E">消しゴム [E]</button>
+                <button id="moveBtn"     class="btn btn-mode" title="押している間だけ切り替え: W">コマ移動 [W]</button>
             </div>
 
             <div class="section">
                 <h3>ペンの色</h3>
-                <div class="color-buttons">
-                    <button class="btn btn-color color-black active" data-color="#2c2c2c" title="黒"></button>
-                    <button class="btn btn-color color-blue"         data-color="#3498db" title="青"></button>
-                    <button class="btn btn-color color-red"          data-color="#e74c3c" title="赤"></button>
-                    <button class="btn btn-color color-green"        data-color="#27ae60" title="緑"></button>
+                <div class="pen-colors">
+                    <div class="pen-slots">
+                        <button id="penSecondary" class="pen-slot pen-secondary" title="右クリックで描く色（クリックで編集）"></button>
+                        <button id="penPrimary"   class="pen-slot pen-primary active" title="左クリックで描く色（クリックで編集）"></button>
+                    </div>
+                    <div class="pen-tools">
+                        <div class="pen-mini-row">
+                            <button id="penSwap"  class="pen-mini" title="左右の色を入れ替え">⇄</button>
+                            <button id="penReset" class="pen-mini" title="初期の色に戻す">↺</button>
+                        </div>
+                        <button id="penExpand" class="pen-expand">拡張 &gt;&gt;</button>
+                    </div>
                 </div>
+                <div id="penAdvanced" class="pen-advanced" style="display:none;">
+                    <canvas id="penWheel" class="pen-wheel" width="150" height="150"></canvas>
+                    <label class="pen-row">明るさ
+                        <input type="range" id="penValue" min="0" max="100" value="100">
+                    </label>
+                    <label class="pen-row">色コード
+                        <input type="text" id="penHex" maxlength="7" spellcheck="false" autocomplete="off" value="#000000">
+                    </label>
+                </div>
+                <div id="penSwatches" class="pen-swatches"></div>
+                <p class="hint pen-hint">描画モード：左ボタン＝左の色／右ボタン＝右の色。パレットは左クリックで左の色、右クリックで右の色に設定</p>
             </div>
 
             <!-- コマ配置：A〜D × 4形 -->
@@ -51,6 +69,7 @@
                 <select id="iconCategory" class="select-fit icon-category">
                     <option value="basic">基本コマ（A〜D）</option>
                     <option value="char">キャラクターアイコン</option>
+                    <option value="action">行動アイコン</option>
                 </select>
                 <div id="basicPieces" class="piece-grid">
                     <!-- ヘッダー行 -->
@@ -85,6 +104,7 @@
                     <button class="btn btn-piece-cell piece-d" data-type="D" data-shape="star"></button>
                 </div>
                 <div id="charPalette" class="char-palette" style="display:none;"></div>
+                <div id="actionPalette" class="action-palette" style="display:none;"></div>
             </div>
 
             <div class="section">
@@ -110,10 +130,68 @@
         <div class="board-container">
             <canvas id="boardCanvas"></canvas>
         </div>
+
+        <aside class="help-panel">
+            <h2>操作説明</h2>
+
+            <details class="help-section" name="help">
+                <summary>モード切替</summary>
+                <div class="help-body">
+                <dl>
+                    <dt>自由描画 <kbd>Q</kbd></dt>
+                    <dd>左ボタン＝左の色、右ボタン＝右の色で線を引く。</dd>
+                    <dt>消しゴム <kbd>E</kbd></dt>
+                    <dd>左ボタン＝触れた部分だけ消す（線のみ）。<br>右ボタン＝線ごと消す。コマに触れると、行動アイコン→コマの順に消える。</dd>
+                    <dt>コマ移動 <kbd>W</kbd></dt>
+                    <dd>コマをドラッグして移動。右クリックで、行動アイコン→コマの順に削除。</dd>
+                </dl>
+                <p class="help-note">キーは<strong>押している間だけ</strong>切り替わり、離すと元のモードに戻る。マウスのボタンを押している間は切り替わらない。</p>
+                </div>
+            </details>
+
+            <details class="help-section" name="help">
+                <summary>ペンの色</summary>
+                <div class="help-body">
+                <ul>
+                    <li>左右の四角をクリックして、編集する色を選ぶ。</li>
+                    <li>パレットは左クリック＝左の色、右クリック＝右の色に設定。</li>
+                    <li>⇄ で左右を入れ替え、↺ で初期の色に戻す。</li>
+                    <li>「拡張」でカラーホイール・明るさ・色コード（#rrggbb）を使える。</li>
+                    <li>色は自動で保存され、次回も復元される。</li>
+                </ul>
+                </div>
+            </details>
+
+            <details class="help-section" name="help">
+                <summary>アイコンの配置</summary>
+                <div class="help-body">
+                <ul>
+                    <li>プルダウンで「基本コマ／キャラクター／行動アイコン」を切り替える。</li>
+                    <li>アイコンを選んで、ボードをクリックして配置。同じアイコンをもう一度押すと選択解除。</li>
+                    <li>行動アイコンは、コマの近くに置くと右上に重なり、コマと一緒に動く。何もない場所に置くと単体になる。</li>
+                    <li>右クリックで削除（行動アイコン→コマの順）。</li>
+                </ul>
+                </div>
+            </details>
+
+            <details class="help-section" name="help">
+                <summary>その他</summary>
+                <div class="help-body">
+                <ul>
+                    <li><kbd>Ctrl</kbd>+<kbd>Z</kbd> で元に戻す。</li>
+                    <li>ボードは画面の高さに収まる大きさで表示。ページ上部でホイールを1回まわすとボードが画面にぴったり収まり、逆にまわすと先頭に戻る。</li>
+                    <li>背景画像：画像を選択（フィット／原寸）。「方眼紙に戻す」で解除。</li>
+                    <li>💾 画像保存でPNGに書き出し。</li>
+                    <li>テーマ（ダーク／ライト／クリーム）は他のツールと共通。</li>
+                </ul>
+                </div>
+            </details>
+        </aside>
     </div>
 
     <script src="../characters.js"></script>
     <script src="grid.js"></script>
+    <script src="actions.js"></script>
     <script src="pieces.js"></script>
     <script src="arrows.js"></script>
     <script src="main.js"></script>

@@ -2,6 +2,8 @@
 // コマの形式:
 //   基本コマ        { kind:'basic', type, shape, x, y }   ※kind省略時も基本コマとして扱う
 //   キャラクター    { kind:'char',  charKey, x, y }      ※charKey は "コスト_ID"（例: "3.0_c001"）
+//   行動アイコン単体 { kind:'action', actionType, x, y }
+//   どのコマにも、重ねた行動アイコン action:'attack' などを持たせられる（移動は本体と一緒）
 const IMAGE_BASE_URL = "https://raw.githubusercontent.com/Ala-Aster/Starward_tools/main/image";
 
 class Pieces {
@@ -57,10 +59,12 @@ class Pieces {
         return entry.loaded ? entry.img : null;
     }
 
-    getPieceAt(x, y, threshold = this.pieceRadius * 1.5) {
+    // filter: 対象を絞る関数（省略可）
+    getPieceAt(x, y, threshold = this.pieceRadius * 1.5, filter = null) {
         let closest = null;
         let closestDist = threshold;
         for (const piece of this.pieces) {
+            if (filter && !filter(piece)) continue;
             const dist = Math.hypot(piece.x - x, piece.y - y);
             if (dist < closestDist) { closestDist = dist; closest = piece; }
         }
@@ -68,8 +72,24 @@ class Pieces {
     }
 
     getPieceAtPixel(x, y) {
-        const rect = this.grid.canvas.getBoundingClientRect();
-        return this.getPieceAt(x - rect.left, y - rect.top);
+        const c = this.grid.toCanvas(x, y);
+        return this.getPieceAt(c.x, c.y);
+    }
+
+    // 行動アイコンを重ねられるコマ（行動アイコン単体は除く）
+    getAttachTarget(x, y) {
+        return this.getPieceAt(x, y, this.pieceRadius * 1.5, p => p.kind !== 'action');
+    }
+
+    // 消しゴム用：行動アイコンが重なっていればそれだけ外し、なければコマを消す
+    // 戻り値: 'action'（行動アイコンを外した） / 'piece'（コマを消した）
+    removeStep(piece) {
+        if (piece.kind !== 'action' && piece.action) {
+            delete piece.action;
+            return 'action';
+        }
+        this.removePiece(piece);
+        return 'piece';
     }
 
     removePiece(piece) {
@@ -79,10 +99,18 @@ class Pieces {
 
     draw(ctx) {
         for (const piece of this.pieces) this._drawPiece(ctx, piece);
+        // 重ねた行動アイコンは、他のコマに隠れないよう最後に描く
+        const r = this.pieceRadius + 2;
+        for (const piece of this.pieces) {
+            if (piece.kind !== 'action' && piece.action) {
+                ActionIcons.draw(ctx, piece.action, piece.x + r * 0.8, piece.y - r * 0.8, 0.6);
+            }
+        }
     }
 
     _drawPiece(ctx, piece) {
         if (piece.kind === 'char') { this._drawCharPiece(ctx, piece); return; }
+        if (piece.kind === 'action') { ActionIcons.draw(ctx, piece.actionType, piece.x, piece.y, 0.9); return; }
         const { x, y, type, shape } = piece;
         const r = this.pieceRadius;
         const color = this.colors[type];
@@ -170,16 +198,14 @@ class Pieces {
     }
 
     startDrag(x, y) {
-        const rect = this.grid.canvas.getBoundingClientRect();
-        this.draggedPiece = this.getPieceAt(x - rect.left, y - rect.top);
+        const c = this.grid.toCanvas(x, y);
+        this.draggedPiece = this.getPieceAt(c.x, c.y);
         return this.draggedPiece !== null;
     }
 
     dragPiece(x, y) {
         if (!this.draggedPiece) return;
-        const rect = this.grid.canvas.getBoundingClientRect();
-        const cx = x - rect.left;
-        const cy = y - rect.top;
+        const { x: cx, y: cy } = this.grid.toCanvas(x, y);
         if (cx >= 0 && cx < this.grid.width && cy >= 0 && cy < this.grid.height) {
             this.draggedPiece.x = cx;
             this.draggedPiece.y = cy;

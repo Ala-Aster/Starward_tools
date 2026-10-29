@@ -102,14 +102,30 @@ class Grid {
     }
 
     /**
+     * 画面上の座標（clientX/clientY）を、キャンバス内の座標に変換する。
+     * キャンバスは CSS で拡大縮小される（画面に収めるため）ので、表示サイズとの比率で換算する。
+     */
+    toCanvas(clientX, clientY) {
+        const rect = this.canvas.getBoundingClientRect();
+        const borderX = this.canvas.clientLeft || 0, borderY = this.canvas.clientTop || 0;
+        const w = this.canvas.clientWidth || this.width;
+        const h = this.canvas.clientHeight || this.height;
+        return {
+            x: (clientX - rect.left - borderX) * this.width / w,
+            y: (clientY - rect.top - borderY) * this.height / h
+        };
+    }
+
+    /** 表示倍率（画面上の1pxあたりキャンバスの何pxか、の逆数：1以下なら縮小表示） */
+    get scale() {
+        return (this.canvas.clientWidth || this.width) / this.width;
+    }
+
+    /**
      * グリッド内かチェック
      */
     isInsideGrid(x, y) {
-        const rect = this.canvas.getBoundingClientRect();
-        const canvasX = x - rect.left;
-        const canvasY = y - rect.top;
-
-        return canvasX >= 0 && canvasX < this.width &&
-               canvasY >= 0 && canvasY < this.height;
+        const p = this.toCanvas(x, y);
+        return p.x >= 0 && p.x < this.width && p.y >= 0 && p.y < this.height;
     }
 }
